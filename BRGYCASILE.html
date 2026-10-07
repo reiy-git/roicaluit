@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Barangay Micro and Small Business Database</title>
+  <title>BRGY. SALA MSE DATA BASE</title>
   
   <!-- Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
 
-  <!-- Tailwind CSS & Chart.js -->
+  <!-- Tailwind CSS, Chart.js & QRCode.js -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   
   <script>
     tailwind.config = {
@@ -64,8 +65,7 @@
     
     .touch-pan { -webkit-overflow-scrolling: touch; }
     
-    /* Smooth modal & tab animations */
-    .fade-enter { animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .fade-enter { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     .modal-pop { animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     
     @keyframes fadeIn {
@@ -73,291 +73,632 @@
       to { opacity: 1; transform: translateY(0); }
     }
     @keyframes popIn {
-      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .checkbox-chip input:checked + span {
+      background-color: #0a192f;
+      color: #fbbf24;
+      border-color: #0a192f;
+      box-shadow: 0 2px 4px rgba(10,25,47,0.15);
     }
   </style>
 </head>
 <body class="min-h-full flex flex-col bg-[#f8fafc] text-slate-800 antialiased font-sans pb-16 md:pb-8">
 
-  <!-- TOP APP HEADER (Sticky & Glassmorphic) -->
-  <header class="sticky top-0 z-40 bg-brand-900/95 backdrop-blur-md border-b border-brand-800 text-white shadow-card">
-    <div class="max-w-6xl mx-auto px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-3">
-      
-      <!-- Brand & Title -->
-      <div class="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-sun-400 via-sun-500 to-amber-600 text-brand-950 font-black flex items-center justify-center text-xs sm:text-sm shadow-glow ring-2 ring-sun-400/30 flex-shrink-0">
-          MSME
+  <!-- ================= PUBLIC FORM MODE (GFORMS STYLE VIEW) ================= -->
+  <div id="publicFormContainer" class="hidden min-h-screen flex-col bg-slate-100/70">
+    <!-- Header Banner -->
+    <header class="bg-gradient-to-r from-brand-950 via-brand-900 to-slate-900 text-white border-b border-brand-800 shadow-md">
+      <div class="max-w-3xl mx-auto px-4 py-6 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sun-400 to-amber-600 text-brand-950 font-black flex items-center justify-center text-sm shadow-glow ring-4 ring-sun-400/20 flex-shrink-0">
+            SALA
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight">BRGY. SALA MSE DATA BASE</h1>
+            <p class="text-xs text-sun-300 font-semibold mt-0.5">Official Micro & Small Enterprise Registration Portal</p>
+          </div>
         </div>
-        <div class="min-w-0">
-          <h1 class="font-black text-xs sm:text-base tracking-tight text-white leading-tight">BARANGAY MICRO AND SMALL BUSINESS DATABASE</h1>
-          <p class="text-[10px] sm:text-xs text-slate-300 font-medium truncate">Enterprise Registry & Analytics Management</p>
-        </div>
-      </div>
-
-      <!-- Header Right: Open Add Modal Button -->
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <button onclick="openAddModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-sun-400 to-sun-500 hover:from-sun-300 hover:to-sun-400 text-brand-950 font-extrabold text-xs rounded-xl shadow-md active:scale-95 transition-all">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-          <span class="hidden sm:inline">Register Enterprise</span>
-          <span class="sm:hidden">Add</span>
+        <button onclick="switchAppMode('dashboard')" class="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-bold rounded-xl border border-white/15 transition-all flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-sun-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          Admin Login / Portal
         </button>
       </div>
+    </header>
 
-    </div>
-
-    <!-- Segmented Navigation Bar -->
-    <div class="border-t border-brand-800/60 bg-brand-950/40">
-      <div class="max-w-6xl mx-auto px-3 sm:px-6">
-        <nav class="flex gap-1 sm:gap-2 overflow-x-auto text-xs py-1.5 scrollbar-none touch-pan">
-          <button onclick="switchTab('records')" id="nav-records" class="px-3 py-1.5 rounded-lg font-bold bg-brand-800 text-sun-400 shadow-sm transition-all whitespace-nowrap flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            Master Records
-          </button>
-          <button onclick="switchTab('analytics')" id="nav-analytics" class="px-3 py-1.5 rounded-lg font-semibold text-slate-300 hover:text-white hover:bg-brand-800/50 transition-all whitespace-nowrap flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
-            Visual Analytics
-          </button>
-          <button onclick="switchTab('summary')" id="nav-summary" class="px-3 py-1.5 rounded-lg font-semibold text-slate-300 hover:text-white hover:bg-brand-800/50 transition-all whitespace-nowrap flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-            Metric Scorecard
-          </button>
-        </nav>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-6xl w-full mx-auto p-3.5 sm:p-6 flex-1 space-y-5 sm:space-y-6">
-
-    <!-- KPI STATS CARDS (Top Overview) -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-      <div class="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-card flex items-center justify-between">
-        <div>
-          <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider block">Total Businesses</span>
-          <span id="quickTotal" class="text-xl sm:text-2xl font-black text-brand-900 mt-0.5 block">0</span>
-          <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1 mt-0.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> In Database
-          </span>
-        </div>
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-        </div>
-      </div>
-
-      <div class="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-card flex items-center justify-between">
-        <div>
-          <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider block">LGU Beneficiaries</span>
-          <span id="quickAssisted" class="text-xl sm:text-2xl font-black text-emerald-600 mt-0.5 block">0</span>
-          <span id="quickRate" class="text-[10px] text-slate-500 font-bold mt-0.5 block">0% assisted</span>
-        </div>
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </div>
-      </div>
-
-      <div class="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-card flex items-center justify-between">
-        <div class="min-w-0 pr-1">
-          <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider block truncate">Leading Sector</span>
-          <span id="quickTopSector" class="text-base sm:text-lg font-black text-sun-600 mt-0.5 block truncate">Retail</span>
-          <span class="text-[10px] text-slate-500 font-semibold truncate block">Dominant domain</span>
-        </div>
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-        </div>
-      </div>
-
-      <div class="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-card flex items-center justify-between">
-        <div class="min-w-0 pr-1">
-          <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider block truncate">Priority Request</span>
-          <span id="quickTopDemand" class="text-xs sm:text-sm font-black text-brand-800 mt-0.5 block truncate">Financing</span>
-          <span class="text-[10px] text-slate-500 font-semibold truncate block">Top support needed</span>
-        </div>
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 1: MASTER RECORDS VIEW -->
-    <section id="view-records" class="space-y-4 sm:space-y-5 fade-enter">
-
-      <!-- FILTER CHIPS & SEARCH CONTROLS -->
-      <div class="space-y-2.5">
-        
-        <!-- Search & Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center justify-between">
-          <div class="relative flex-1">
-            <input type="text" id="searchInput" oninput="renderTable()" placeholder="Search enterprise, owner, sector..." class="w-full pl-9 pr-8 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 font-medium shadow-card transition-all" />
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </span>
-            <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
-              ✕
-            </button>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <button onclick="openAddModal()" class="px-4 py-2.5 bg-brand-900 hover:bg-brand-950 text-sun-400 font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all active:scale-95">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-              <span>+ Add Record</span>
-            </button>
-            <button onclick="exportCSV()" class="px-3.5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-xs rounded-xl shadow-card flex items-center justify-center gap-1.5 transition-colors">
-              <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              <span>Export CSV</span>
-            </button>
-            <button onclick="resetDemoData()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors" title="Reset Demo Seeds">
-              🔄 Reset Seeds
-            </button>
-          </div>
-        </div>
-
-        <!-- Quick Sector Filter Chips -->
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none touch-pan text-[11px]">
-          <span class="text-slate-400 font-bold text-[10px] uppercase tracking-wider pl-1 pr-1 flex-shrink-0">Filter:</span>
-          <button onclick="setFilterSector('ALL')" id="chip-ALL" class="filter-chip px-2.5 py-1 rounded-full font-bold bg-brand-900 text-sun-400 flex-shrink-0 transition-all">All</button>
-          <button onclick="setFilterSector('Retail')" id="chip-Retail" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Retail</button>
-          <button onclick="setFilterSector('Food and Beverage')" id="chip-Food" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Food & Bev</button>
-          <button onclick="setFilterSector('Agriculture')" id="chip-Agriculture" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Agriculture</button>
-          <button onclick="setFilterSector('Service')" id="chip-Service" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Service</button>
-          <button onclick="setFilterSector('Manufacturing')" id="chip-Manufacturing" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Manufacturing</button>
-        </div>
-
-      </div>
-
-      <!-- DESKTOP TABLE VIEW (md:block) -->
-      <div class="hidden md:block bg-white rounded-2xl border border-slate-200/90 shadow-card overflow-hidden">
-        <table class="w-full text-left text-xs border-collapse">
-          <thead>
-            <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-extrabold uppercase tracking-wider text-[11px] whitespace-nowrap">
-              <th class="p-3.5">Business & Owner</th>
-              <th class="p-3.5">Sector</th>
-              <th class="p-3.5">Capitalization</th>
-              <th class="p-3.5">LGU Aid</th>
-              <th class="p-3.5">Priority Support</th>
-              <th class="p-3.5 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
-            <!-- Dynamic rows -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- MOBILE CARD VIEW (md:hidden) -->
-      <div id="mobileCardsContainer" class="md:hidden space-y-3">
-        <!-- Dynamic mobile cards -->
-      </div>
-
-      <!-- No Data Placeholder -->
-      <div id="noDataMsg" class="p-10 text-center text-slate-400 hidden bg-white rounded-2xl border border-slate-200/80 shadow-card">
-        <svg class="w-10 h-10 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <p class="font-bold text-slate-600 text-xs">No matching enterprise records found</p>
-        <p class="text-[11px] text-slate-400 mt-0.5">Try clearing filters or adding a new record.</p>
-      </div>
-
-    </section>
-
-    <!-- TAB 2: VISUAL ANALYTICS -->
-    <section id="view-analytics" class="hidden space-y-4 sm:space-y-6 fade-enter">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-        
-        <!-- Sector Mix -->
-        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card">
-          <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2.5">
-            <h3 class="font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span>
-              Sector Demographics
-            </h3>
-            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Mix</span>
-          </div>
-          <div class="relative h-56 sm:h-64 flex items-center justify-center">
-            <canvas id="chartSectors"></canvas>
-          </div>
-        </div>
-
-        <!-- Capital Tiers -->
-        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card">
-          <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2.5">
-            <h3 class="font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-sun-500"></span>
-              Capitalization Brackets
-            </h3>
-            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Tiers</span>
-          </div>
-          <div class="relative h-56 sm:h-64 flex items-center justify-center">
-            <canvas id="chartCapital"></canvas>
-          </div>
-        </div>
-
-        <!-- Support Demand -->
-        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card md:col-span-2">
-          <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2.5">
-            <h3 class="font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-brand-900"></span>
-              LGU Development Program Demand
-            </h3>
-            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Demand Priority</span>
-          </div>
-          <div class="relative h-60 sm:h-72 flex items-center justify-center">
-            <canvas id="chartSupport"></canvas>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- TAB 3: METRIC SCORECARD -->
-    <section id="view-summary" class="hidden space-y-4 sm:space-y-6 fade-enter">
+    <!-- Public Form Body -->
+    <main class="max-w-3xl w-full mx-auto p-4 sm:p-6 flex-1">
       
-      <!-- Progress Banner -->
-      <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-slate-900 rounded-2xl p-5 text-white shadow-elevated">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-widest text-sun-400">Barangay Economic Indicator</span>
-            <h3 class="text-base sm:text-lg font-black text-white mt-0.5">MSME Formalization & Assistance Index</h3>
-            <p class="text-xs text-slate-300 mt-1 max-w-xl">Tracking registered micro, small, and medium enterprises receiving city and barangay-level business support programs.</p>
-          </div>
-          <div class="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl p-3.5 text-center min-w-[130px]">
-            <span class="text-[10px] uppercase font-bold text-slate-300 block">Assistance Coverage</span>
-            <span id="scorecardRate" class="text-2xl sm:text-3xl font-black text-sun-400 block mt-0.5">0%</span>
-          </div>
+      <!-- Intro Card -->
+      <div class="bg-white rounded-2xl border-t-8 border-t-brand-900 border border-slate-200 p-5 sm:p-7 shadow-card mb-5">
+        <h2 class="text-lg sm:text-xl font-black text-slate-900">Barangay Sala Business Registration Form</h2>
+        <p class="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
+          Welcome to the official registration system for Micro and Small Enterprises (MSEs) of Barangay Sala. Please fill out your business profile accurately. Your information will be used for barangay database records and eligibility for local government assistance programs.
+        </p>
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-semibold">
+          <span>🔒 Confidential Registration</span>
+          <span class="text-rose-500">* Required fields</span>
         </div>
       </div>
 
-      <!-- Detailed Breakdown Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <!-- Public Submission Form -->
+      <form id="publicBusinessForm" onsubmit="submitPublicRegistration(event)" class="space-y-5">
         
-        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card">
-          <h4 class="font-bold text-xs text-slate-900 uppercase tracking-wider mb-2">Registration Status</h4>
-          <div id="statRegistrationList" class="space-y-2 text-xs">
-            <!-- Dynamic registration counts -->
+        <!-- Section 1: Business Details -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-card space-y-4">
+          <h3 class="font-extrabold text-sm text-brand-900 uppercase tracking-wider border-b border-slate-100 pb-2.5 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-sun-500"></span> 1. Business Profile
+          </h3>
+
+          <div>
+            <label class="block font-bold text-xs text-slate-800 mb-1">Business Name <span class="text-rose-500">*</span></label>
+            <input type="text" id="pub_businessName" required placeholder="e.g. Sala General Store & Bakery" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 font-medium transition-all" />
+          </div>
+
+          <div>
+            <label class="block font-bold text-xs text-slate-800 mb-1">Proprietor / Owner Name <span class="text-rose-500">*</span></label>
+            <input type="text" id="pub_ownerName" required placeholder="e.g. Maria Santos" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 font-medium transition-all" />
+          </div>
+
+          <div>
+            <label class="block font-bold text-xs text-slate-800 mb-1">Business Address <span class="text-rose-500">*</span></label>
+            <input type="text" id="pub_businessAddress" required placeholder="e.g. Purok 3, Brgy. Sala, Cabuyao, Laguna" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 font-medium transition-all" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-bold text-xs text-slate-800 mb-1">Business Sector <span class="text-rose-500">*</span></label>
+              <select id="pub_typeBusiness" onchange="togglePublicSectorOthers()" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 font-medium transition-all">
+                <option value="">Select Sector</option>
+                <option value="Retail">Retail</option>
+                <option value="Wholesale">Wholesale</option>
+                <option value="Food and Beverage">Food and Beverage</option>
+                <option value="Agriculture">Agriculture</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Service">Service</option>
+                <option value="Online Business">Online Business</option>
+                <option value="Others">Others</option>
+              </select>
+              <div id="pub_sectorOthersContainer" class="hidden mt-2">
+                <input type="text" id="pub_sectorOthers" placeholder="Please specify your business sector..." class="w-full px-3.5 py-2 bg-amber-50/60 border border-amber-300 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-amber-500 font-medium transition-all" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-xs text-slate-800 mb-1">Ownership Nature</label>
+              <select id="pub_ownership" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 font-medium transition-all">
+                <option value="Sole Proprietorship">Sole Proprietorship</option>
+                <option value="Partnership">Partnership</option>
+                <option value="Corporation">Corporation</option>
+                <option value="Cooperative">Cooperative</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card">
-          <h4 class="font-bold text-xs text-slate-900 uppercase tracking-wider mb-2">Assistance Type Provided</h4>
-          <div id="statAssistanceList" class="space-y-2 text-xs">
-            <!-- Dynamic assistance counts -->
+        <!-- Section 2: Enterprise Capacity -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-card space-y-4">
+          <h3 class="font-extrabold text-sm text-brand-900 uppercase tracking-wider border-b border-slate-100 pb-2.5 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span> 2. Enterprise Capacity & Revenue
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block font-bold text-xs text-slate-800 mb-1">Employee Count</label>
+              <select id="pub_employees" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 font-medium transition-all">
+                <option value="1 - 4 employees">1 - 4 employees</option>
+                <option value="5 - 9 employees">5 - 9 employees</option>
+                <option value="10 - 99 employees">10 - 99 employees</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block font-bold text-xs text-slate-800 mb-1">Estimated Capitalization</label>
+              <select id="pub_capitalization" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 font-medium transition-all">
+                <option value="Less than ₱50,000">Less than ₱50,000</option>
+                <option value="₱50,000 - ₱500,000">₱50,000 - ₱500,000</option>
+                <option value="₱500,001 - ₱3,000,000">₱500,001 - ₱3,000,000</option>
+                <option value="Above ₱3,000,000">Above ₱3,000,000</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block font-bold text-xs text-slate-800 mb-1">Annual Sales Bracket</label>
+              <select id="pub_annualSales" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 font-medium transition-all">
+                <option value="Less than ₱500,000">Less than ₱500,000</option>
+                <option value="₱500,001 - ₱3 Million">₱500,001 - ₱3 Million</option>
+                <option value="₱3 Million - ₱15 Million">₱3 Million - ₱15 Million</option>
+                <option value="Above ₱15 Million">Above ₱15 Million</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card sm:col-span-2 md:col-span-1">
-          <h4 class="font-bold text-xs text-slate-900 uppercase tracking-wider mb-2">Ownership Profile</h4>
-          <div id="statOwnershipList" class="space-y-2 text-xs">
-            <!-- Dynamic ownership counts -->
+        <!-- Section 3: Acquired Registration & Assistance -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-card space-y-5">
+          <h3 class="font-extrabold text-sm text-brand-900 uppercase tracking-wider border-b border-slate-100 pb-2.5 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 3. Acquired Registration & LGU Support
+          </h3>
+
+          <!-- Acquired Registration Multi Select -->
+          <div>
+            <label class="block font-bold text-xs text-slate-800 mb-1">Acquired Registration <span class="text-slate-400 font-normal">(select all that apply)</span></label>
+            <div id="pub_acquiredRegistrationGroup" class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Barangay Permit" class="hidden pub-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Barangay Permit</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Mayor's Permit" class="hidden pub-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Mayor's Permit</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="DTI" class="hidden pub-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">DTI Registration</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="SEC" class="hidden pub-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">SEC Registration</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="CDA" class="hidden pub-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">CDA Registration</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="BIR" class="hidden pub-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">BIR Registration</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Others" onchange="togglePublicRegOthers()" id="pub_cb_regOthers" class="hidden pub-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Others</span>
+              </label>
+            </div>
+            <div id="pub_regOthersContainer" class="hidden mt-2.5">
+              <input type="text" id="pub_regOthers" placeholder="Specify other registration permits acquired..." class="w-full px-3.5 py-2 bg-amber-50/60 border border-amber-300 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-amber-500 font-medium transition-all" />
+            </div>
           </div>
+
+          <!-- LGU Assistance Recipient -->
+          <div class="pt-2 border-t border-slate-100">
+            <label class="block font-bold text-xs text-slate-800 mb-1">LGU Assistance Recipient?</label>
+            <select id="pub_lguReceived" onchange="handlePublicLguAssistanceChange()" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 font-medium transition-all">
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+
+          <!-- LGU Satisfaction Evaluation Pop-up / Sub-box (If Yes) -->
+          <div id="pub_satisfactionSection" class="hidden p-4 bg-emerald-50/80 border border-emerald-200 rounded-2xl space-y-3">
+            <div class="flex items-center gap-2 text-emerald-900 font-extrabold text-xs">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
+              <span>LGU Assistance Satisfaction Evaluation</span>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-emerald-950 mb-1">Are you satisfied with the LGU assistance received?</label>
+              <select id="pub_satisfactionRating" class="w-full px-3 py-2 bg-white border border-emerald-300 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-emerald-400">
+                <option value="Satisfied">😀 Satisfied</option>
+                <option value="Neutral">😐 Neutral</option>
+                <option value="Not Satisfied">🙁 Not Satisfied</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-emerald-950 mb-1">Feedback / Remarks (Optional)</label>
+              <input type="text" id="pub_satisfactionFeedback" placeholder="How was your experience receiving assistance?" class="w-full px-3 py-2 bg-white border border-emerald-300 rounded-xl text-xs text-slate-800" />
+            </div>
+          </div>
+
+          <!-- Assistance Type Received (Select all that apply) -->
+          <div>
+            <label class="block font-bold text-xs text-slate-800 mb-1">Assistance Type Received <span class="text-slate-400 font-normal">(select all that apply)</span></label>
+            <div id="pub_assistanceTypeGroup" class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="None" class="hidden pub-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">None</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Skills Training" class="hidden pub-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Skills Training</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Business Seminar" class="hidden pub-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Business Seminar</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Financial Assistance" class="hidden pub-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Financial Assistance</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Marketing Assistance" class="hidden pub-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Marketing Assistance</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Equipment Assistance" class="hidden pub-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Equipment Assistance</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Product Development" class="hidden pub-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Product Development</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Others" onchange="togglePublicAidOthers()" id="pub_cb_aidOthers" class="hidden pub-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Others</span>
+              </label>
+            </div>
+            <div id="pub_aidOthersContainer" class="hidden mt-2.5">
+              <input type="text" id="pub_aidOthers" placeholder="Specify other assistance type received..." class="w-full px-3.5 py-2 bg-amber-50/60 border border-amber-300 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-amber-500 font-medium transition-all" />
+            </div>
+          </div>
+
+          <!-- Support Program Needed (Select all that apply) -->
+          <div class="pt-2 border-t border-slate-100">
+            <label class="block font-bold text-xs text-slate-800 mb-1">Support Program Needed <span class="text-slate-400 font-normal">(select all that apply)</span></label>
+            <div id="pub_supportGroup" class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Access to Financing" class="hidden pub-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Access to Financing</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Entrepreneurship Training" class="hidden pub-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Entrepreneurship Training</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Digital Marketing" class="hidden pub-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Digital Marketing</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Product Development" class="hidden pub-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Product Development</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Technology Adoption" class="hidden pub-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Technology Adoption</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Market Linkages" class="hidden pub-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Market Linkages</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Others" onchange="togglePublicSupOthers()" id="pub_cb_supOthers" class="hidden pub-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold transition-all text-center truncate">Others</span>
+              </label>
+            </div>
+            <div id="pub_supOthersContainer" class="hidden mt-2.5">
+              <input type="text" id="pub_supOthers" placeholder="Specify what support program you need..." class="w-full px-3.5 py-2.5 bg-amber-50/60 border border-amber-300 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-amber-500 font-medium transition-all" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Registration Button -->
+        <div class="pt-2">
+          <button type="submit" class="w-full py-4 bg-gradient-to-r from-sun-400 via-sun-500 to-amber-600 hover:from-sun-300 hover:to-sun-400 text-brand-950 font-black text-sm rounded-2xl shadow-elevated active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+            <span>Submit Business Registration</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Public Registration Success Card -->
+      <div id="publicSuccessCard" class="hidden bg-white rounded-2xl border border-slate-200 p-8 text-center shadow-elevated space-y-4 my-8 fade-enter">
+        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto ring-8 ring-emerald-50">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <h2 class="text-xl font-black text-slate-900">Registration Submitted Successfully!</h2>
+        <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+          Thank you for registering your enterprise with Barangay Sala MSE Database. Your business details have been recorded safely into the barangay system.
+        </p>
+        <div class="pt-2">
+          <button onclick="resetPublicForm()" class="px-6 py-2.5 bg-brand-900 text-sun-400 font-extrabold text-xs rounded-xl shadow-md transition-all hover:bg-brand-950">
+            Submit Another Registration
+          </button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+
+  <!-- ================= ADMIN DASHBOARD MODE ================= -->
+  <div id="adminDashboardContainer" class="flex flex-col flex-1">
+
+    <!-- TOP APP HEADER (Sticky & Glassmorphic) -->
+    <header class="sticky top-0 z-40 bg-brand-900/95 backdrop-blur-md border-b border-brand-800 text-white shadow-card">
+      <div class="max-w-7xl mx-auto px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-3">
+        
+        <!-- Brand & Title -->
+        <div class="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-sun-400 via-sun-500 to-amber-600 text-brand-950 font-black flex items-center justify-center text-xs sm:text-sm shadow-glow ring-2 ring-sun-400/30 flex-shrink-0">
+            SALA
+          </div>
+          <div class="min-w-0">
+            <h1 class="font-black text-xs sm:text-base tracking-tight text-white leading-tight truncate">BRGY. SALA MSE DATA BASE</h1>
+            <p class="text-[10px] sm:text-xs text-slate-300 font-medium truncate">Barangay Sala Micro & Small Enterprise Registry</p>
+          </div>
+        </div>
+
+        <!-- Header Right Actions -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <!-- Share Link Button -->
+          <button onclick="openShareLinkModal()" class="inline-flex items-center gap-1.5 px-3 py-2 bg-white/10 hover:bg-white/20 text-sun-300 font-bold text-xs rounded-xl border border-white/15 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            <span class="hidden md:inline">Share Public Link</span>
+            <span class="md:hidden">Share Link</span>
+          </button>
+
+          <!-- Add Modal Button -->
+          <button onclick="openAddModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-sun-400 to-sun-500 hover:from-sun-300 hover:to-sun-400 text-brand-950 font-extrabold text-xs rounded-xl shadow-md active:scale-95 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+            <span class="hidden sm:inline">Register Enterprise</span>
+            <span class="sm:hidden">Add</span>
+          </button>
         </div>
 
       </div>
 
-    </section>
+      <!-- Segmented Navigation Bar -->
+      <div class="border-t border-brand-800/60 bg-brand-950/40">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between">
+          <nav class="flex gap-1 sm:gap-2 overflow-x-auto text-xs py-1.5 scrollbar-none touch-pan">
+            <button onclick="switchTab('records')" id="nav-records" class="px-3 py-1.5 rounded-lg font-bold bg-brand-800 text-sun-400 shadow-sm transition-all whitespace-nowrap flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 01-2-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+              Master Records
+            </button>
+            <button onclick="switchTab('analytics')" id="nav-analytics" class="px-3 py-1.5 rounded-lg font-semibold text-slate-300 hover:text-white hover:bg-brand-800/50 transition-all whitespace-nowrap flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+              Visual Analytics
+            </button>
+            <button onclick="switchTab('summary')" id="nav-summary" class="px-3 py-1.5 rounded-lg font-semibold text-slate-300 hover:text-white hover:bg-brand-800/50 transition-all whitespace-nowrap flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+              Metric Scorecard
+            </button>
+          </nav>
+          
+          <button onclick="switchAppMode('register')" class="text-[11px] font-bold text-sun-300 hover:text-white px-2.5 py-1 rounded-md bg-brand-800/80 hover:bg-brand-800 transition-all flex items-center gap-1">
+            <span>🌐 View Public Form</span>
+          </button>
+        </div>
+      </div>
+    </header>
 
-  </main>
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="max-w-7xl w-full mx-auto p-3.5 sm:p-6 flex-1 space-y-5 sm:space-y-6">
 
-  <!-- 1. ADD / EDIT RECORD MODAL -->
+      <!-- KPI STATS CARDS -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div class="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-card flex items-center justify-between">
+          <div>
+            <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider block">Total Registered</span>
+            <span id="quickTotal" class="text-xl sm:text-2xl font-black text-brand-900 mt-0.5 block">0</span>
+            <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1 mt-0.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> In Brgy. Sala Database
+            </span>
+          </div>
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          </div>
+        </div>
+
+        <div class="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-card flex items-center justify-between">
+          <div>
+            <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider block">LGU Beneficiaries</span>
+            <span id="quickAssisted" class="text-xl sm:text-2xl font-black text-emerald-600 mt-0.5 block">0</span>
+            <span id="quickRate" class="text-[10px] text-slate-500 font-bold mt-0.5 block">0% assisted</span>
+          </div>
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+        </div>
+
+        <div class="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-card flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider block truncate">Leading Sector</span>
+            <span id="quickTopSector" class="text-base sm:text-lg font-black text-sun-600 mt-0.5 block truncate">Retail</span>
+            <span class="text-[10px] text-slate-500 font-semibold truncate block">Dominant domain</span>
+          </div>
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          </div>
+        </div>
+
+        <div class="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-card flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider block truncate">Top Program Demand</span>
+            <span id="quickTopDemand" class="text-xs sm:text-sm font-black text-brand-800 mt-0.5 block truncate">Financing</span>
+            <span class="text-[10px] text-slate-500 font-semibold truncate block">Support program needed</span>
+          </div>
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 1: MASTER RECORDS VIEW -->
+      <section id="view-records" class="space-y-4 sm:space-y-5 fade-enter">
+
+        <!-- FILTER CHIPS & SEARCH CONTROLS -->
+        <div class="space-y-2.5">
+          
+          <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center justify-between">
+            <div class="relative flex-1">
+              <input type="text" id="searchInput" oninput="renderTable()" placeholder="Search enterprise, owner, address, sector..." class="w-full pl-9 pr-8 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 font-medium shadow-card transition-all" />
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              </span>
+              <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
+                ✕
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="openAddModal()" class="px-4 py-2.5 bg-brand-900 hover:bg-brand-950 text-sun-400 font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                <span>+ Add Record</span>
+              </button>
+              <button onclick="exportCSV()" class="px-3.5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-xs rounded-xl shadow-card flex items-center justify-center gap-1.5 transition-colors">
+                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span>Export CSV</span>
+              </button>
+              <button onclick="resetDemoData()" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors" title="Reset Demo Seeds">
+                🔄 Seeds
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Sector Filter Chips -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none touch-pan text-[11px]">
+            <span class="text-slate-400 font-bold text-[10px] uppercase tracking-wider pl-1 pr-1 flex-shrink-0">Sector Filter:</span>
+            <button onclick="setFilterSector('ALL')" id="chip-ALL" class="filter-chip px-2.5 py-1 rounded-full font-bold bg-brand-900 text-sun-400 flex-shrink-0 transition-all">All Sectors</button>
+            <button onclick="setFilterSector('Retail')" id="chip-Retail" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Retail</button>
+            <button onclick="setFilterSector('Wholesale')" id="chip-Wholesale" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Wholesale</button>
+            <button onclick="setFilterSector('Food and Beverage')" id="chip-Food" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Food & Bev</button>
+            <button onclick="setFilterSector('Agriculture')" id="chip-Agriculture" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Agriculture</button>
+            <button onclick="setFilterSector('Service')" id="chip-Service" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Service</button>
+            <button onclick="setFilterSector('Manufacturing')" id="chip-Manufacturing" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Manufacturing</button>
+            <button onclick="setFilterSector('Online Business')" id="chip-Online" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Online Business</button>
+            <button onclick="setFilterSector('Others')" id="chip-Others" class="filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all">Others</button>
+          </div>
+
+        </div>
+
+        <!-- DESKTOP TABLE VIEW -->
+        <div class="hidden md:block bg-white rounded-2xl border border-slate-200/90 shadow-card overflow-hidden">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-extrabold uppercase tracking-wider text-[11px] whitespace-nowrap">
+                <th class="p-3.5">Business & Proprietor</th>
+                <th class="p-3.5">Address</th>
+                <th class="p-3.5">Sector</th>
+                <th class="p-3.5">Acquired Registration</th>
+                <th class="p-3.5">LGU Aid & Satisfaction</th>
+                <th class="p-3.5">Support Program Needed</th>
+                <th class="p-3.5 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- MOBILE CARD VIEW -->
+        <div id="mobileCardsContainer" class="md:hidden space-y-3">
+          <!-- Dynamic mobile cards -->
+        </div>
+
+        <!-- No Data Placeholder -->
+        <div id="noDataMsg" class="p-10 text-center text-slate-400 hidden bg-white rounded-2xl border border-slate-200/80 shadow-card">
+          <svg class="w-10 h-10 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <p class="font-bold text-slate-600 text-xs">No matching enterprise records found</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Try clearing filters or registering a new record.</p>
+        </div>
+
+      </section>
+
+      <!-- TAB 2: VISUAL ANALYTICS -->
+      <section id="view-analytics" class="hidden space-y-4 sm:space-y-6 fade-enter">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          
+          <!-- Sector Mix -->
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card">
+            <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2.5">
+              <h3 class="font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span>
+                Sector Demographics
+              </h3>
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Mix</span>
+            </div>
+            <div class="relative h-56 sm:h-64 flex items-center justify-center">
+              <canvas id="chartSectors"></canvas>
+            </div>
+          </div>
+
+          <!-- Acquired Registration Mix -->
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card">
+            <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2.5">
+              <h3 class="font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-sun-500"></span>
+                Acquired Registrations Breakdown
+              </h3>
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Permits</span>
+            </div>
+            <div class="relative h-56 sm:h-64 flex items-center justify-center">
+              <canvas id="chartRegistrations"></canvas>
+            </div>
+          </div>
+
+          <!-- Support Program Needed -->
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card md:col-span-2">
+            <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2.5">
+              <h3 class="font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-900"></span>
+                Support Program Needed Demand
+              </h3>
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Requested Programs</span>
+            </div>
+            <div class="relative h-60 sm:h-72 flex items-center justify-center">
+              <canvas id="chartSupport"></canvas>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 3: METRIC SCORECARD -->
+      <section id="view-summary" class="hidden space-y-4 sm:space-y-6 fade-enter">
+        
+        <!-- Progress Banner -->
+        <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-slate-900 rounded-2xl p-5 text-white shadow-elevated">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-sun-400">Barangay Sala Economic Index</span>
+              <h3 class="text-base sm:text-lg font-black text-white mt-0.5">MSME Formalization & Satisfaction Metric</h3>
+              <p class="text-xs text-slate-300 mt-1 max-w-xl">Tracking registered enterprises, acquired permit metrics, and recipient satisfaction evaluation scores.</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl p-3.5 text-center min-w-[140px]">
+              <span class="text-[10px] uppercase font-bold text-slate-300 block">Assistance Coverage</span>
+              <span id="scorecardRate" class="text-2xl sm:text-3xl font-black text-sun-400 block mt-0.5">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Breakdown Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card">
+            <h4 class="font-bold text-xs text-slate-900 uppercase tracking-wider mb-2">Acquired Registrations</h4>
+            <div id="statRegistrationList" class="space-y-2 text-xs">
+              <!-- Dynamic registration counts -->
+            </div>
+          </div>
+
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card">
+            <h4 class="font-bold text-xs text-slate-900 uppercase tracking-wider mb-2">Assistance Type Received</h4>
+            <div id="statAssistanceList" class="space-y-2 text-xs">
+              <!-- Dynamic assistance counts -->
+            </div>
+          </div>
+
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card sm:col-span-2 md:col-span-1">
+            <h4 class="font-bold text-xs text-slate-900 uppercase tracking-wider mb-2">LGU Recipient Satisfaction</h4>
+            <div id="statSatisfactionList" class="space-y-2 text-xs">
+              <!-- Dynamic satisfaction counts -->
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+
+  <!-- ================= MODALS & DRAWERS ================= -->
+
+  <!-- 1. ADD / EDIT RECORD MODAL (ADMIN) -->
   <div id="recordModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-3.5 sm:p-5 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-elevated border border-slate-200 modal-pop overflow-hidden my-auto">
+    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-elevated border border-slate-200 modal-pop overflow-hidden my-auto">
       
       <!-- Modal Header -->
       <div class="px-5 py-4 bg-gradient-to-r from-brand-900 via-brand-800 to-slate-900 text-white flex items-center justify-between flex-shrink-0">
@@ -365,7 +706,7 @@
           <span class="w-3 h-3 rounded-full bg-sun-400 shadow-glow"></span>
           <div>
             <h2 id="modalFormTitle" class="font-bold text-sm sm:text-base text-white">Register New Enterprise</h2>
-            <p class="text-[11px] text-slate-300">Complete all required business profile information</p>
+            <p class="text-[11px] text-slate-300">BRGY. SALA MSE DATA BASE Record Management</p>
           </div>
         </div>
         <button onclick="closeRecordModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition-colors">
@@ -381,7 +722,7 @@
           <!-- Business Name -->
           <div>
             <label class="block font-bold text-slate-700 mb-1">Business Name <span class="text-rose-500">*</span></label>
-            <input type="text" id="businessName" placeholder="e.g. Sunrise Bakery & Cafe" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium" />
+            <input type="text" id="businessName" placeholder="e.g. Sala General Store" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium" />
           </div>
 
           <!-- Owner Name -->
@@ -390,30 +731,39 @@
             <input type="text" id="ownerName" placeholder="e.g. Maria Santos" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium" />
           </div>
 
+          <!-- Business Address -->
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-700 mb-1">Business Address <span class="text-rose-500">*</span></label>
+            <input type="text" id="businessAddress" placeholder="e.g. Purok 3, Brgy. Sala, Cabuyao, Laguna" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium" />
+          </div>
+
           <!-- Sector -->
           <div>
             <label class="block font-bold text-slate-700 mb-1">Business Sector <span class="text-rose-500">*</span></label>
-            <select id="typeBusiness" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
+            <select id="typeBusiness" onchange="toggleAdminSectorOthers()" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
               <option value="">Select Sector</option>
-              <option>Retail</option>
-              <option>Wholesale</option>
-              <option>Food and Beverage</option>
-              <option>Agriculture</option>
-              <option>Manufacturing</option>
-              <option>Service</option>
-              <option>Online Business</option>
-              <option>Others</option>
+              <option value="Retail">Retail</option>
+              <option value="Wholesale">Wholesale</option>
+              <option value="Food and Beverage">Food and Beverage</option>
+              <option value="Agriculture">Agriculture</option>
+              <option value="Manufacturing">Manufacturing</option>
+              <option value="Service">Service</option>
+              <option value="Online Business">Online Business</option>
+              <option value="Others">Others</option>
             </select>
+            <div id="adm_sectorOthersContainer" class="hidden mt-2">
+              <input type="text" id="typeBusinessOthers" placeholder="Specify sector details..." class="w-full px-3 py-2 bg-amber-50/60 border border-amber-300 rounded-xl text-slate-900 focus:bg-white focus:border-amber-500 font-medium transition-all" />
+            </div>
           </div>
 
           <!-- Ownership Nature -->
           <div>
             <label class="block font-bold text-slate-700 mb-1">Ownership Nature</label>
             <select id="ownership" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
-              <option>Sole Proprietorship</option>
-              <option>Partnership</option>
-              <option>Corporation</option>
-              <option>Cooperative</option>
+              <option value="Sole Proprietorship">Sole Proprietorship</option>
+              <option value="Partnership">Partnership</option>
+              <option value="Corporation">Corporation</option>
+              <option value="Cooperative">Cooperative</option>
             </select>
           </div>
 
@@ -421,9 +771,9 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">Employee Count</label>
             <select id="employees" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
-              <option>1 - 4 employees</option>
-              <option>5 - 9 employees</option>
-              <option>10 - 99 employees</option>
+              <option value="1 - 4 employees">1 - 4 employees</option>
+              <option value="5 - 9 employees">5 - 9 employees</option>
+              <option value="10 - 99 employees">10 - 99 employees</option>
             </select>
           </div>
 
@@ -431,10 +781,10 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">Estimated Capitalization</label>
             <select id="capitalization" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
-              <option>Less than ₱50,000</option>
-              <option>₱50,000 - ₱500,000</option>
-              <option>₱500,001 - ₱3,000,000</option>
-              <option>Above ₱3,000,000</option>
+              <option value="Less than ₱50,000">Less than ₱50,000</option>
+              <option value="₱50,000 - ₱500,000">₱50,000 - ₱500,000</option>
+              <option value="₱500,001 - ₱3,000,000">₱500,001 - ₱3,000,000</option>
+              <option value="Above ₱3,000,000">Above ₱3,000,000</option>
             </select>
           </div>
 
@@ -442,63 +792,159 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">Annual Sales Bracket</label>
             <select id="annualSales" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
-              <option>Less than ₱500,000</option>
-              <option>₱500,001 - ₱3 Million</option>
-              <option>₱3 Million - ₱15 Million</option>
-              <option>Above ₱15 Million</option>
+              <option value="Less than ₱500,000">Less than ₱500,000</option>
+              <option value="₱500,001 - ₱3 Million">₱500,001 - ₱3 Million</option>
+              <option value="₱3 Million - ₱15 Million">₱3 Million - ₱15 Million</option>
+              <option value="Above ₱15 Million">Above ₱15 Million</option>
             </select>
           </div>
 
-          <!-- Registration Authority -->
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Registration Authority</label>
-            <select id="registration" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
-              <option>Barangay Permit</option>
-              <option>Mayor's Permit</option>
-              <option>DTI</option>
-              <option>SEC</option>
-              <option>CDA</option>
-              <option>BIR</option>
-              <option>Others</option>
-            </select>
+          <!-- Acquired Registration (Select all that apply) -->
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-700 mb-1">Acquired Registration <span class="text-slate-400 font-normal">(select all that apply)</span></label>
+            <div id="adm_acquiredRegGroup" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-1.5">
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Barangay Permit" class="hidden adm-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Barangay Permit</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Mayor's Permit" class="hidden adm-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Mayor's Permit</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="DTI" class="hidden adm-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">DTI Registration</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="SEC" class="hidden adm-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">SEC Registration</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="CDA" class="hidden adm-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">CDA Registration</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="BIR" class="hidden adm-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">BIR Registration</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Others" id="adm_cb_regOthers" onchange="toggleAdminRegOthers()" class="hidden adm-reg-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Others</span>
+              </label>
+            </div>
+            <div id="adm_regOthersContainer" class="hidden mt-2">
+              <input type="text" id="adm_regOthers" placeholder="Specify other registration permits..." class="w-full px-3 py-2 bg-amber-50/60 border border-amber-300 rounded-xl text-slate-900 focus:bg-white font-medium transition-all" />
+            </div>
           </div>
 
           <!-- LGU Assistance Recipient -->
           <div>
             <label class="block font-bold text-slate-700 mb-1">LGU Assistance Recipient?</label>
-            <select id="lguReceived" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
-              <option>No</option>
-              <option>Yes</option>
+            <select id="lguReceived" onchange="handleAdminLguAssistanceChange()" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
             </select>
           </div>
 
-          <!-- Assistance Type -->
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Assistance Type Received</label>
-            <select id="assistanceType" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
-              <option>None</option>
-              <option>Skills Training</option>
-              <option>Business Seminar</option>
-              <option>Financial Assistance</option>
-              <option>Marketing Assistance</option>
-              <option>Equipment Assistance</option>
-              <option>Product Development</option>
-              <option>Others</option>
-            </select>
+          <!-- Satisfaction Evaluation (If Yes) -->
+          <div id="adm_satisfactionSection" class="hidden sm:col-span-2 p-3.5 bg-emerald-50/90 border border-emerald-200 rounded-xl space-y-2">
+            <div class="flex items-center gap-1.5 text-emerald-900 font-bold">
+              <span>LGU Recipient Evaluation</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-emerald-950 mb-1">Satisfaction Status</label>
+                <select id="satisfactionRating" class="w-full px-3 py-2 bg-white border border-emerald-300 rounded-xl text-slate-900 font-semibold">
+                  <option value="Satisfied">😀 Satisfied</option>
+                  <option value="Neutral">😐 Neutral</option>
+                  <option value="Not Satisfied">🙁 Not Satisfied</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-emerald-950 mb-1">Feedback Remarks</label>
+                <input type="text" id="satisfactionFeedback" placeholder="Optional remarks..." class="w-full px-3 py-2 bg-white border border-emerald-300 rounded-xl text-slate-900" />
+              </div>
+            </div>
           </div>
 
-          <!-- Support Needed -->
+          <!-- Assistance Type Received (Select all that apply) -->
           <div class="sm:col-span-2">
-            <label class="block font-bold text-slate-700 mb-1">Priority Support Program Needed</label>
-            <select id="supportStrengthen" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all font-medium">
-              <option>Access to Financing</option>
-              <option>Entrepreneurship Training</option>
-              <option>Digital Marketing</option>
-              <option>Product Development</option>
-              <option>Technology Adoption</option>
-              <option>Market Linkages</option>
-              <option>Others</option>
-            </select>
+            <label class="block font-bold text-slate-700 mb-1">Assistance Type Received <span class="text-slate-400 font-normal">(select all that apply)</span></label>
+            <div id="adm_assistanceGroup" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-1.5">
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="None" class="hidden adm-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">None</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Skills Training" class="hidden adm-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Skills Training</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Business Seminar" class="hidden adm-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Business Seminar</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Financial Assistance" class="hidden adm-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Financial Assistance</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Marketing Assistance" class="hidden adm-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Marketing Assistance</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Equipment Assistance" class="hidden adm-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Equipment Assistance</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Product Development" class="hidden adm-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Product Development</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Others" id="adm_cb_aidOthers" onchange="toggleAdminAidOthers()" class="hidden adm-aid-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Others</span>
+              </label>
+            </div>
+            <div id="adm_aidOthersContainer" class="hidden mt-2">
+              <input type="text" id="adm_aidOthers" placeholder="Specify other assistance type..." class="w-full px-3 py-2 bg-amber-50/60 border border-amber-300 rounded-xl text-slate-900 focus:bg-white font-medium transition-all" />
+            </div>
+          </div>
+
+          <!-- Support Program Needed (Select all that apply) -->
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-700 mb-1">Support Program Needed <span class="text-slate-400 font-normal">(select all that apply)</span></label>
+            <div id="adm_supportGroup" class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1.5">
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Access to Financing" class="hidden adm-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Access to Financing</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Entrepreneurship Training" class="hidden adm-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Entrepreneurship Training</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Digital Marketing" class="hidden adm-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Digital Marketing</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Product Development" class="hidden adm-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Product Development</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Technology Adoption" class="hidden adm-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Technology Adoption</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Market Linkages" class="hidden adm-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Market Linkages</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Others" id="adm_cb_supOthers" onchange="toggleAdminSupOthers()" class="hidden adm-sup-cb" />
+                <span class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Others</span>
+              </label>
+            </div>
+            <div id="adm_supOthersContainer" class="hidden mt-2">
+              <input type="text" id="adm_supOthers" placeholder="Specify what support program is needed..." class="w-full px-3 py-2 bg-amber-50/60 border border-amber-300 rounded-xl text-slate-900 focus:bg-white font-medium transition-all" />
+            </div>
           </div>
         </div>
 
@@ -520,30 +966,20 @@
   <!-- 2. DELETE CONFIRMATION MODAL -->
   <div id="deleteModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-elevated border border-slate-200 modal-pop text-center space-y-4 my-auto">
-      
-      <!-- Icon -->
       <div class="w-14 h-14 rounded-full bg-rose-50 text-rose-600 border-4 border-rose-100 mx-auto flex items-center justify-center shadow-sm">
         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
       </div>
-
       <div>
         <h3 class="font-extrabold text-slate-900 text-base sm:text-lg">Delete Enterprise Record?</h3>
         <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
           Are you sure you want to remove <strong id="deleteBizName" class="text-slate-800 font-bold">this business</strong> from the database? This action cannot be undone.
         </p>
       </div>
-
       <input type="hidden" id="deleteTargetIndex" value="-1" />
-
       <div class="flex items-center justify-center gap-2.5 pt-2">
-        <button onclick="closeDeleteModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors">
-          Cancel
-        </button>
-        <button onclick="confirmDelete()" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-xl text-xs shadow-md transition-colors">
-          Yes, Delete
-        </button>
+        <button onclick="closeDeleteModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors">Cancel</button>
+        <button onclick="confirmDelete()" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-xl text-xs shadow-md transition-colors">Yes, Delete</button>
       </div>
-
     </div>
   </div>
 
@@ -558,56 +994,141 @@
         </div>
         <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-sm">✕</button>
       </div>
-
-      <div class="grid grid-cols-2 gap-2.5 text-xs" id="modalDetailsContent">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs" id="modalDetailsContent">
         <!-- Injected via JS -->
       </div>
-
       <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-2" id="modalActions">
         <!-- Action buttons -->
       </div>
     </div>
   </div>
 
-  <!-- MOBILE BOTTOM FLOATING ACTION BAR -->
-  <div class="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 sm:hidden p-2.5 shadow-elevated">
-    <div class="flex items-center justify-between gap-2 max-w-md mx-auto">
-      <button onclick="openAddModal()" class="flex-1 py-2.5 bg-gradient-to-r from-brand-900 to-brand-800 text-sun-400 font-extrabold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition-all">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-        <span>Add Enterprise</span>
-      </button>
-      <button onclick="exportCSV()" class="p-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 active:scale-95 transition-all" title="Export CSV">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-      </button>
+  <!-- 4. SHARE PUBLIC REGISTRATION LINK MODAL -->
+  <div id="shareLinkModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-elevated border border-slate-200 modal-pop text-center space-y-4 my-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-extrabold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+          <span>🔗 Public Registration Link</span>
+        </h3>
+        <button onclick="closeShareLinkModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold text-xs">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-600">
+        Scan this QR Code with a mobile device to open the public registration form. Submissions feed directly into your admin database.
+      </p>
+
+      <!-- Link Box -->
+      <div class="flex flex-col items-center justify-center pt-2 pb-2">
+        <div id="qrcode" class="p-3 bg-white border border-slate-200 rounded-xl shadow-sm inline-block"></div>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button onclick="closeShareLinkModal()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Close</button>
+      </div>
     </div>
   </div>
 
   <footer class="bg-white border-t border-slate-200 text-slate-500 text-center py-3 text-xs mt-auto">
-    Barangay Micro and Small Business Database • Single-File Hub
+    BRGY. SALA MSE DATA BASE • Barangay Micro & Small Enterprise System
   </footer>
 
-  <!-- SCRIPT ENGINE -->
+  <!-- ================= APPLICATION SCRIPT ================= -->
   <script>
     const SEEDS = [
-      { businessName: "Sunrise Bakery & Cafe", ownerName: "Elena Santos", typeBusiness: "Retail", ownership: "Sole Proprietorship", employees: "1 - 4 employees", capitalization: "Less than ₱50,000", annualSales: "Less than ₱500,000", registration: "Barangay Permit", lguReceived: "Yes", assistanceType: "Skills Training", supportStrengthen: "Access to Financing" },
-      { businessName: "Highland Coffee Roastery", ownerName: "Rodrigo Alcantara", typeBusiness: "Food and Beverage", ownership: "Sole Proprietorship", employees: "5 - 9 employees", capitalization: "₱500,001 - ₱3,000,000", annualSales: "₱3 Million - ₱15 Million", registration: "DTI", lguReceived: "Yes", assistanceType: "Product Development", supportStrengthen: "Market Linkages" },
-      { businessName: "Greenfields Agri-Produce Farm", ownerName: "Engr. Mateo Hernandez", typeBusiness: "Agriculture", ownership: "Partnership", employees: "10 - 99 employees", capitalization: "Above ₱3,000,000", annualSales: "₱3 Million - ₱15 Million", registration: "SEC", lguReceived: "No", assistanceType: "None", supportStrengthen: "Technology Adoption" },
-      { businessName: "QuickFix Motor & Auto Works", ownerName: "Danilo Reyes", typeBusiness: "Service", ownership: "Sole Proprietorship", employees: "1 - 4 employees", capitalization: "₱50,000 - ₱500,000", annualSales: "Less than ₱500,000", registration: "Mayor's Permit", lguReceived: "No", assistanceType: "None", supportStrengthen: "Access to Financing" },
-      { businessName: "Pure Aqua Refilling Station", ownerName: "Victor Garcia", typeBusiness: "Retail", ownership: "Sole Proprietorship", employees: "1 - 4 employees", capitalization: "₱500,001 - ₱3,000,000", annualSales: "₱500,001 - ₱3 Million", registration: "Mayor's Permit", lguReceived: "No", assistanceType: "None", supportStrengthen: "Digital Marketing" },
-      { businessName: "Artisan Handicrafts & Weaving", ownerName: "Corazon Mendoza", typeBusiness: "Manufacturing", ownership: "Cooperative", employees: "5 - 9 employees", capitalization: "₱50,000 - ₱500,000", annualSales: "Less than ₱500,000", registration: "CDA", lguReceived: "Yes", assistanceType: "Marketing Assistance", supportStrengthen: "Market Linkages" }
+      {
+        businessName: "Sala Sunrise General Store",
+        ownerName: "Elena Santos",
+        businessAddress: "Purok 1, Brgy. Sala, Cabuyao, Laguna",
+        typeBusiness: "Retail",
+        ownership: "Sole Proprietorship",
+        employees: "1 - 4 employees",
+        capitalization: "Less than ₱50,000",
+        annualSales: "Less than ₱500,000",
+        registration: ["Barangay Permit", "DTI"],
+        lguReceived: "Yes",
+        satisfactionRating: "Satisfied",
+        satisfactionFeedback: "Fast processing for local seminar",
+        assistanceType: ["Skills Training", "Business Seminar"],
+        supportStrengthen: ["Access to Financing", "Digital Marketing"]
+      },
+      {
+        businessName: "Laguna Express Wholesale & Trade",
+        ownerName: "Rodrigo Alcantara",
+        businessAddress: "Purok 4, Brgy. Sala, Cabuyao, Laguna",
+        typeBusiness: "Wholesale",
+        ownership: "Partnership",
+        employees: "5 - 9 employees",
+        capitalization: "₱500,001 - ₱3,000,000",
+        annualSales: "₱3 Million - ₱15 Million",
+        registration: ["Barangay Permit", "Mayor's Permit", "DTI", "BIR"],
+        lguReceived: "Yes",
+        satisfactionRating: "Satisfied",
+        satisfactionFeedback: "Helpful equipment support",
+        assistanceType: ["Equipment Assistance", "Product Development"],
+        supportStrengthen: ["Market Linkages", "Access to Financing"]
+      },
+      {
+        businessName: "Sala Digital Shoppe",
+        ownerName: "Patricia Ramos",
+        businessAddress: "Sitio Riverside, Brgy. Sala, Cabuyao, Laguna",
+        typeBusiness: "Online Business",
+        ownership: "Sole Proprietorship",
+        employees: "1 - 4 employees",
+        capitalization: "₱50,000 - ₱500,000",
+        annualSales: "₱500,001 - ₱3 Million",
+        registration: ["DTI", "BIR"],
+        lguReceived: "No",
+        assistanceType: ["None"],
+        supportStrengthen: ["Digital Marketing", "Technology Adoption"]
+      },
+      {
+        businessName: "Cabuyao Fresh Agri Produce",
+        ownerName: "Engr. Mateo Hernandez",
+        businessAddress: "Purok 5, Brgy. Sala, Cabuyao, Laguna",
+        typeBusiness: "Agriculture",
+        ownership: "Cooperative",
+        employees: "10 - 99 employees",
+        capitalization: "Above ₱3,000,000",
+        annualSales: "₱3 Million - ₱15 Million",
+        registration: ["Barangay Permit", "CDA", "BIR"],
+        lguReceived: "Yes",
+        satisfactionRating: "Neutral",
+        satisfactionFeedback: "Needs more market linkage support",
+        assistanceType: ["Marketing Assistance"],
+        supportStrengthen: ["Market Linkages", "Technology Adoption"]
+      }
     ];
 
-    let businesses = JSON.parse(localStorage.getItem("businesses")) || [...SEEDS];
+    let businesses = JSON.parse(localStorage.getItem("brgy_sala_mse_records")) || [...SEEDS];
     let currentSectorFilter = "ALL";
     let chart1, chart2, chart3;
 
     function saveToStorage() {
-      localStorage.setItem("businesses", JSON.stringify(businesses));
+      localStorage.setItem("brgy_sala_mse_records", JSON.stringify(businesses));
       renderTable();
       updateCharts();
       updateScorecard();
     }
 
+    // App View Mode (dashboard vs register public mode)
+    function switchAppMode(mode) {
+      const isPublic = mode === 'register';
+      document.getElementById('publicFormContainer').classList.toggle('hidden', !isPublic);
+      document.getElementById('publicFormContainer').classList.toggle('flex', isPublic);
+      document.getElementById('adminDashboardContainer').classList.toggle('hidden', isPublic);
+      
+      // Update hash in URL
+      if (isPublic) {
+        window.location.hash = 'register';
+        document.body.style.backgroundColor = '#f1f5f9';
+      } else {
+        window.location.hash = 'dashboard';
+        document.body.style.backgroundColor = '#f8fafc';
+        renderTable();
+      }
+    }
+
+    // Tab switcher inside Admin Dashboard
     function switchTab(tabId) {
       ['records', 'analytics', 'summary'].forEach(t => {
         document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tabId);
@@ -627,7 +1148,12 @@
       document.querySelectorAll(".filter-chip").forEach(btn => {
         btn.className = "filter-chip px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 flex-shrink-0 transition-all";
       });
-      const key = sector === 'Food and Beverage' ? 'Food' : sector;
+      const keyMap = {
+        'Food and Beverage': 'Food',
+        'Online Business': 'Online',
+        'ALL': 'ALL'
+      };
+      const key = keyMap[sector] || sector;
       const activeBtn = document.getElementById(`chip-${key}`);
       if (activeBtn) {
         activeBtn.className = "filter-chip px-2.5 py-1 rounded-full font-bold bg-brand-900 text-sun-400 flex-shrink-0 transition-all";
@@ -641,37 +1167,211 @@
       renderTable();
     }
 
-    // ================= MODAL CONTROLLERS =================
+    // Helper to get checked values from checkboxes
+    function getCheckedValues(containerSelector, cbClass, othersCbId, othersInputId) {
+      const checkboxes = document.querySelectorAll(`.${cbClass}`);
+      const selected = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          if (cb.value === "Others") {
+            const spec = document.getElementById(othersInputId)?.value.trim();
+            selected.push(spec ? `Others: ${spec}` : "Others");
+          } else {
+            selected.push(cb.value);
+          }
+        }
+      });
+      return selected.length > 0 ? selected : ["None"];
+    }
 
-    // 1. Add Modal
+    // Helper to set checkboxes from an array
+    function setCheckedValues(cbClass, othersCbId, othersInputId, valuesArr) {
+      const arr = Array.isArray(valuesArr) ? valuesArr : (valuesArr ? [valuesArr] : []);
+      const checkboxes = document.querySelectorAll(`.${cbClass}`);
+      let hasOthers = false;
+      let othersVal = "";
+
+      checkboxes.forEach(cb => {
+        const match = arr.find(v => v === cb.value || (v && v.startsWith("Others") && cb.value === "Others"));
+        if (match) {
+          cb.checked = true;
+          if (match.startsWith("Others:")) {
+            hasOthers = true;
+            othersVal = match.replace("Others:", "").trim();
+          }
+        } else {
+          cb.checked = false;
+        }
+      });
+
+      if (othersCbId && othersInputId) {
+        const othCb = document.getElementById(othersCbId);
+        if (othCb) othCb.checked = hasOthers || arr.some(v => v && v.startsWith("Others"));
+        const othInp = document.getElementById(othersInputId);
+        if (othInp) othInp.value = othersVal;
+      }
+    }
+
+    // Toggle Dynamic Others Text inputs
+    function togglePublicSectorOthers() {
+      const val = document.getElementById("pub_typeBusiness").value;
+      document.getElementById("pub_sectorOthersContainer").classList.toggle("hidden", val !== "Others");
+    }
+
+    function toggleAdminSectorOthers() {
+      const val = document.getElementById("typeBusiness").value;
+      document.getElementById("adm_sectorOthersContainer").classList.toggle("hidden", val !== "Others");
+    }
+
+    function togglePublicRegOthers() {
+      const checked = document.getElementById("pub_cb_regOthers").checked;
+      document.getElementById("pub_regOthersContainer").classList.toggle("hidden", !checked);
+    }
+
+    function toggleAdminRegOthers() {
+      const checked = document.getElementById("adm_cb_regOthers").checked;
+      document.getElementById("adm_regOthersContainer").classList.toggle("hidden", !checked);
+    }
+
+    function togglePublicAidOthers() {
+      const checked = document.getElementById("pub_cb_aidOthers").checked;
+      document.getElementById("pub_aidOthersContainer").classList.toggle("hidden", !checked);
+    }
+
+    function toggleAdminAidOthers() {
+      const checked = document.getElementById("adm_cb_aidOthers").checked;
+      document.getElementById("adm_aidOthersContainer").classList.toggle("hidden", !checked);
+    }
+
+    function togglePublicSupOthers() {
+      const checked = document.getElementById("pub_cb_supOthers").checked;
+      document.getElementById("pub_supOthersContainer").classList.toggle("hidden", !checked);
+    }
+
+    function toggleAdminSupOthers() {
+      const checked = document.getElementById("adm_cb_supOthers").checked;
+      document.getElementById("adm_supOthersContainer").classList.toggle("hidden", !checked);
+    }
+
+    function handlePublicLguAssistanceChange() {
+      const isYes = document.getElementById("pub_lguReceived").value === "Yes";
+      document.getElementById("pub_satisfactionSection").classList.toggle("hidden", !isYes);
+    }
+
+    function handleAdminLguAssistanceChange() {
+      const isYes = document.getElementById("lguReceived").value === "Yes";
+      document.getElementById("adm_satisfactionSection").classList.toggle("hidden", !isYes);
+    }
+
+
+    // ================= PUBLIC FORM REGISTRATION =================
+    function submitPublicRegistration(e) {
+      e.preventDefault();
+
+      let sectorVal = document.getElementById("pub_typeBusiness").value;
+      if (sectorVal === "Others") {
+        const spec = document.getElementById("pub_sectorOthers").value.trim();
+        if (spec) sectorVal = `Others: ${spec}`;
+      }
+
+      const lguRec = document.getElementById("pub_lguReceived").value;
+
+      const record = {
+        businessName: document.getElementById("pub_businessName").value.trim(),
+        ownerName: document.getElementById("pub_ownerName").value.trim(),
+        businessAddress: document.getElementById("pub_businessAddress").value.trim(),
+        typeBusiness: sectorVal,
+        ownership: document.getElementById("pub_ownership").value,
+        employees: document.getElementById("pub_employees").value,
+        capitalization: document.getElementById("pub_capitalization").value,
+        annualSales: document.getElementById("pub_annualSales").value,
+        registration: getCheckedValues('pub_acquiredRegistrationGroup', 'pub-reg-cb', 'pub_cb_regOthers', 'pub_regOthers'),
+        lguReceived: lguRec,
+        satisfactionRating: lguRec === "Yes" ? document.getElementById("pub_satisfactionRating").value : "N/A",
+        satisfactionFeedback: lguRec === "Yes" ? document.getElementById("pub_satisfactionFeedback").value.trim() : "",
+        assistanceType: getCheckedValues('pub_assistanceTypeGroup', 'pub-aid-cb', 'pub_cb_aidOthers', 'pub_aidOthers'),
+        supportStrengthen: getCheckedValues('pub_supportGroup', 'pub-sup-cb', 'pub_cb_supOthers', 'pub_supOthers')
+      };
+
+      businesses.unshift(record);
+      saveToStorage();
+
+      document.getElementById("publicBusinessForm").classList.add("hidden");
+      document.getElementById("publicSuccessCard").classList.remove("hidden");
+    }
+
+    function resetPublicForm() {
+      document.getElementById("publicBusinessForm").reset();
+      document.getElementById("publicBusinessForm").classList.remove("hidden");
+      document.getElementById("publicSuccessCard").classList.add("hidden");
+      document.getElementById("pub_sectorOthersContainer").classList.add("hidden");
+      document.getElementById("pub_regOthersContainer").classList.add("hidden");
+      document.getElementById("pub_aidOthersContainer").classList.add("hidden");
+      document.getElementById("pub_supOthersContainer").classList.add("hidden");
+      document.getElementById("pub_satisfactionSection").classList.add("hidden");
+    }
+
+
+    // ================= ADMIN MODAL CONTROLLERS =================
+
     function openAddModal() {
       document.getElementById("businessForm").reset();
       document.getElementById("editIndex").value = "-1";
       document.getElementById("modalFormTitle").textContent = "Register New Enterprise";
       document.getElementById("btnModalSubmitText").textContent = "Save Record";
-      
+
+      document.getElementById("adm_sectorOthersContainer").classList.add("hidden");
+      document.getElementById("adm_regOthersContainer").classList.add("hidden");
+      document.getElementById("adm_aidOthersContainer").classList.add("hidden");
+      document.getElementById("adm_supOthersContainer").classList.add("hidden");
+      document.getElementById("adm_satisfactionSection").classList.add("hidden");
+
+      setCheckedValues('adm-reg-cb', 'adm_cb_regOthers', 'adm_regOthers', []);
+      setCheckedValues('adm-aid-cb', 'adm_cb_aidOthers', 'adm_aidOthers', []);
+      setCheckedValues('adm-sup-cb', 'adm_cb_supOthers', 'adm_supOthers', []);
+
       const modal = document.getElementById("recordModal");
       modal.classList.remove("hidden");
       modal.classList.add("flex");
       document.body.style.overflow = "hidden";
     }
 
-    // 2. Edit Modal
     function openEditModal(index) {
       const b = businesses[index];
       if (!b) return;
 
-      document.getElementById("businessName").value = b.businessName;
-      document.getElementById("ownerName").value = b.ownerName;
-      document.getElementById("typeBusiness").value = b.typeBusiness;
-      document.getElementById("ownership").value = b.ownership;
-      document.getElementById("employees").value = b.employees;
-      document.getElementById("capitalization").value = b.capitalization;
-      document.getElementById("annualSales").value = b.annualSales;
-      document.getElementById("registration").value = b.registration;
-      document.getElementById("lguReceived").value = b.lguReceived;
-      document.getElementById("assistanceType").value = b.assistanceType;
-      document.getElementById("supportStrengthen").value = b.supportStrengthen;
+      document.getElementById("businessName").value = b.businessName || '';
+      document.getElementById("ownerName").value = b.ownerName || '';
+      document.getElementById("businessAddress").value = b.businessAddress || '';
+      
+      let sec = b.typeBusiness || '';
+      if (sec.startsWith("Others:")) {
+        document.getElementById("typeBusiness").value = "Others";
+        document.getElementById("adm_sectorOthersContainer").classList.remove("hidden");
+        document.getElementById("typeBusinessOthers").value = sec.replace("Others:", "").trim();
+      } else {
+        document.getElementById("typeBusiness").value = sec;
+        document.getElementById("adm_sectorOthersContainer").classList.add("hidden");
+      }
+
+      document.getElementById("ownership").value = b.ownership || 'Sole Proprietorship';
+      document.getElementById("employees").value = b.employees || '1 - 4 employees';
+      document.getElementById("capitalization").value = b.capitalization || 'Less than ₱50,000';
+      document.getElementById("annualSales").value = b.annualSales || 'Less than ₱500,000';
+      document.getElementById("lguReceived").value = b.lguReceived || 'No';
+
+      const isYes = b.lguReceived === 'Yes';
+      document.getElementById("adm_satisfactionSection").classList.toggle("hidden", !isYes);
+      document.getElementById("satisfactionRating").value = b.satisfactionRating || 'Satisfied';
+      document.getElementById("satisfactionFeedback").value = b.satisfactionFeedback || '';
+
+      setCheckedValues('adm-reg-cb', 'adm_cb_regOthers', 'adm_regOthers', b.registration);
+      setCheckedValues('adm-aid-cb', 'adm_cb_aidOthers', 'adm_aidOthers', b.assistanceType);
+      setCheckedValues('adm-sup-cb', 'adm_cb_supOthers', 'adm_supOthers', b.supportStrengthen);
+
+      toggleAdminRegOthers();
+      toggleAdminAidOthers();
+      toggleAdminSupOthers();
 
       document.getElementById("editIndex").value = index;
       document.getElementById("modalFormTitle").textContent = "Edit Enterprise: " + b.businessName;
@@ -690,7 +1390,46 @@
       document.body.style.overflow = "auto";
     }
 
-    // 3. Delete Modal
+    function saveRecord(e) {
+      e.preventDefault();
+
+      let sectorVal = document.getElementById("typeBusiness").value;
+      if (sectorVal === "Others") {
+        const spec = document.getElementById("typeBusinessOthers").value.trim();
+        if (spec) sectorVal = `Others: ${spec}`;
+      }
+
+      const lguRec = document.getElementById("lguReceived").value;
+
+      const record = {
+        businessName: document.getElementById("businessName").value.trim(),
+        ownerName: document.getElementById("ownerName").value.trim(),
+        businessAddress: document.getElementById("businessAddress").value.trim(),
+        typeBusiness: sectorVal,
+        ownership: document.getElementById("ownership").value,
+        employees: document.getElementById("employees").value,
+        capitalization: document.getElementById("capitalization").value,
+        annualSales: document.getElementById("annualSales").value,
+        registration: getCheckedValues('adm_acquiredRegGroup', 'adm-reg-cb', 'adm_cb_regOthers', 'adm_regOthers'),
+        lguReceived: lguRec,
+        satisfactionRating: lguRec === "Yes" ? document.getElementById("satisfactionRating").value : "N/A",
+        satisfactionFeedback: lguRec === "Yes" ? document.getElementById("satisfactionFeedback").value.trim() : "",
+        assistanceType: getCheckedValues('adm_assistanceGroup', 'adm-aid-cb', 'adm_cb_aidOthers', 'adm_aidOthers'),
+        supportStrengthen: getCheckedValues('adm_supportGroup', 'adm-sup-cb', 'adm_cb_supOthers', 'adm_supOthers')
+      };
+
+      const editIdx = parseInt(document.getElementById("editIndex").value);
+      if (editIdx >= 0) {
+        businesses[editIdx] = record;
+      } else {
+        businesses.unshift(record);
+      }
+
+      closeRecordModal();
+      saveToStorage();
+    }
+
+    // Delete Modal
     function openDeleteModal(index) {
       const b = businesses[index];
       if (!b) return;
@@ -720,29 +1459,35 @@
       closeDeleteModal();
     }
 
-    // 4. Detail Modal
+    // Detail Modal
     function viewDetail(index) {
       const b = businesses[index];
       if (!b) return;
+
+      const regList = Array.isArray(b.registration) ? b.registration.join(', ') : (b.registration || 'N/A');
+      const aidList = Array.isArray(b.assistanceType) ? b.assistanceType.join(', ') : (b.assistanceType || 'N/A');
+      const supList = Array.isArray(b.supportStrengthen) ? b.supportStrengthen.join(', ') : (b.supportStrengthen || 'N/A');
 
       document.getElementById("modalSectorBadge").textContent = b.typeBusiness;
       document.getElementById("modalBizName").textContent = b.businessName;
       document.getElementById("modalOwner").textContent = `Proprietor: ${b.ownerName}`;
 
       const fields = [
+        { label: "Business Address", value: b.businessAddress || 'Brgy. Sala' },
         { label: "Ownership Nature", value: b.ownership },
-        { label: "Staff Count", value: b.employees },
+        { label: "Employee Count", value: b.employees },
         { label: "Capitalization", value: b.capitalization },
         { label: "Annual Sales", value: b.annualSales },
-        { label: "Registration Authority", value: b.registration },
+        { label: "Acquired Registration", value: regList },
         { label: "LGU Aid Recipient", value: b.lguReceived },
-        { label: "Assistance Provided", value: b.assistanceType },
-        { label: "Priority Program Needed", value: b.supportStrengthen }
+        { label: "Satisfaction Status", value: b.lguReceived === 'Yes' ? `${b.satisfactionRating || 'Satisfied'} ${b.satisfactionFeedback ? '(' + b.satisfactionFeedback + ')' : ''}` : 'N/A' },
+        { label: "Assistance Provided", value: aidList },
+        { label: "Support Program Needed", value: supList }
       ];
 
       const content = document.getElementById("modalDetailsContent");
       content.innerHTML = fields.map(f => `
-        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 ${f.label === 'Business Address' || f.label === 'Support Program Needed' ? 'sm:col-span-2' : ''}">
           <span class="text-[10px] uppercase font-bold text-slate-400 block">${f.label}</span>
           <span class="text-xs font-bold text-slate-800 block mt-0.5">${f.value || 'N/A'}</span>
         </div>
@@ -767,16 +1512,48 @@
       document.body.style.overflow = "auto";
     }
 
-    // Close modals on Escape key or backdrop click
+
+    // ================= SHARE LINK MODAL =================
+    let qrCodeInstance = null;
+    function openShareLinkModal() {
+      const publicUrl = window.location.origin + window.location.pathname + '#register';
+      
+      const qrcodeContainer = document.getElementById("qrcode");
+      qrcodeContainer.innerHTML = ""; // Clear existing
+      
+      qrCodeInstance = new QRCode(qrcodeContainer, {
+        text: publicUrl,
+        width: 180,
+        height: 180,
+        colorDark : "#0a192f",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+
+      const modal = document.getElementById("shareLinkModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeShareLinkModal() {
+      const modal = document.getElementById("shareLinkModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.body.style.overflow = "auto";
+    }
+
+    // Modal backdrops & esc listeners
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
         closeRecordModal();
         closeDeleteModal();
         closeDetailModal();
+        closeShareLinkModal();
       }
     });
 
-    [ "recordModal", "deleteModal", "detailModal" ].forEach(id => {
+    ["recordModal", "deleteModal", "detailModal", "shareLinkModal"].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
         el.addEventListener("click", (e) => {
@@ -784,52 +1561,39 @@
             closeRecordModal();
             closeDeleteModal();
             closeDetailModal();
+            closeShareLinkModal();
           }
         });
       }
     });
 
-    // ================= CRUD SAVE =================
-    function saveRecord(e) {
-      e.preventDefault();
 
-      const record = {
-        businessName: document.getElementById("businessName").value.trim(),
-        ownerName: document.getElementById("ownerName").value.trim(),
-        typeBusiness: document.getElementById("typeBusiness").value,
-        ownership: document.getElementById("ownership").value,
-        employees: document.getElementById("employees").value,
-        capitalization: document.getElementById("capitalization").value,
-        annualSales: document.getElementById("annualSales").value,
-        registration: document.getElementById("registration").value,
-        lguReceived: document.getElementById("lguReceived").value,
-        assistanceType: document.getElementById("assistanceType").value,
-        supportStrengthen: document.getElementById("supportStrengthen").value
-      };
-
-      const editIdx = parseInt(document.getElementById("editIndex").value);
-      if (editIdx >= 0) {
-        businesses[editIdx] = record;
-      } else {
-        businesses.unshift(record);
-      }
-
-      closeRecordModal();
-      saveToStorage();
-    }
-
+    // ================= TABLE RENDER & ANALYTICS =================
     function renderTable() {
       const query = (document.getElementById("searchInput")?.value || "").toLowerCase().trim();
       document.getElementById("clearSearchBtn")?.classList.toggle("hidden", query.length === 0);
 
       const filtered = businesses.filter(b => {
+        const regStr = Array.isArray(b.registration) ? b.registration.join(' ') : (b.registration || '');
+        const supStr = Array.isArray(b.supportStrengthen) ? b.supportStrengthen.join(' ') : (b.supportStrengthen || '');
+        const addrStr = b.businessAddress || '';
+
         const matchesQuery = !query || 
           b.businessName.toLowerCase().includes(query) || 
           b.ownerName.toLowerCase().includes(query) || 
+          addrStr.toLowerCase().includes(query) ||
           b.typeBusiness.toLowerCase().includes(query) ||
-          b.supportStrengthen.toLowerCase().includes(query);
+          regStr.toLowerCase().includes(query) ||
+          supStr.toLowerCase().includes(query);
 
-        const matchesSector = currentSectorFilter === "ALL" || b.typeBusiness === currentSectorFilter;
+        let matchesSector = true;
+        if (currentSectorFilter !== "ALL") {
+          if (currentSectorFilter === "Others") {
+            matchesSector = b.typeBusiness.startsWith("Others");
+          } else {
+            matchesSector = b.typeBusiness === currentSectorFilter;
+          }
+        }
         return matchesQuery && matchesSector;
       });
 
@@ -843,27 +1607,38 @@
       filtered.forEach((b) => {
         const actualIndex = businesses.indexOf(b);
 
-        // 1. Desktop Row
+        const regStr = Array.isArray(b.registration) ? b.registration.join(', ') : (b.registration || 'Barangay Permit');
+        const supStr = Array.isArray(b.supportStrengthen) ? b.supportStrengthen.join(', ') : (b.supportStrengthen || 'Access to Financing');
+
+        // Desktop Row
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50/90 transition-colors";
         tr.innerHTML = `
           <td class="p-3.5">
             <div class="font-extrabold text-slate-900 text-xs">${b.businessName}</div>
-            <div class="text-[11px] text-slate-400 font-medium">${b.ownerName} • ${b.employees}</div>
+            <div class="text-[11px] text-slate-500 font-medium">👤 ${b.ownerName} • ${b.employees}</div>
+          </td>
+          <td class="p-3.5">
+            <div class="text-[11px] font-semibold text-slate-600 max-w-[150px] truncate" title="${b.businessAddress || 'Brgy. Sala'}">
+              📍 ${b.businessAddress || 'Brgy. Sala, Cabuyao'}
+            </div>
           </td>
           <td class="p-3.5">
             <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-brand-50 text-brand-900 border border-brand-100">${b.typeBusiness}</span>
           </td>
           <td class="p-3.5">
-            <span class="font-semibold text-amber-800 text-[11px]">${b.capitalization}</span>
+            <div class="text-[11px] font-medium text-slate-700 max-w-[160px] truncate" title="${regStr}">${regStr}</div>
           </td>
           <td class="p-3.5">
             ${b.lguReceived === 'Yes' 
-              ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">● Assisted</span>'
+              ? `<div class="space-y-0.5">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">● Assisted</span>
+                  <div class="text-[10px] text-slate-500 font-semibold pl-1">${b.satisfactionRating || 'Satisfied'}</div>
+                </div>`
               : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-500">No Aid</span>'}
           </td>
-          <td class="p-3.5 text-slate-600 text-[11px] font-medium">
-            ${b.supportStrengthen}
+          <td class="p-3.5 text-slate-600 text-[11px] font-medium max-w-[180px]">
+            <div class="truncate" title="${supStr}">${supStr}</div>
           </td>
           <td class="p-3.5 text-center whitespace-nowrap">
             <button onclick="viewDetail(${actualIndex})" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-bold text-[11px] mr-1">View</button>
@@ -873,7 +1648,7 @@
         `;
         tbody.appendChild(tr);
 
-        // 2. Mobile Responsive Card
+        // Mobile Card
         const card = document.createElement("div");
         card.className = "bg-white p-4 rounded-2xl border border-slate-200/90 shadow-card space-y-2.5";
         card.innerHTML = `
@@ -881,21 +1656,25 @@
             <div>
               <span class="inline-block px-2 py-0.5 rounded-md text-[9px] font-black bg-brand-50 text-brand-900 border border-brand-100 uppercase tracking-wider">${b.typeBusiness}</span>
               <h3 class="font-black text-slate-900 text-sm mt-1">${b.businessName}</h3>
-              <p class="text-[11px] text-slate-500 font-medium">👤 ${b.ownerName} • ${b.employees}</p>
+              <p class="text-[11px] text-slate-500 font-medium">👤 ${b.ownerName}</p>
+              <p class="text-[10px] text-slate-400 font-medium">📍 ${b.businessAddress || 'Brgy. Sala'}</p>
             </div>
             ${b.lguReceived === 'Yes' 
-              ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex-shrink-0">● Assisted</span>'
+              ? `<div class="text-right">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex-shrink-0">● Assisted</span>
+                  <span class="block text-[9px] text-emerald-800 font-bold mt-0.5">${b.satisfactionRating || 'Satisfied'}</span>
+                 </div>`
               : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-medium bg-slate-100 text-slate-500 flex-shrink-0">No Aid</span>'}
           </div>
 
-          <div class="bg-slate-50 p-2.5 rounded-xl text-[11px] grid grid-cols-2 gap-2 border border-slate-100">
+          <div class="bg-slate-50 p-2.5 rounded-xl text-[11px] space-y-1 border border-slate-100">
             <div>
-              <span class="text-slate-400 block text-[9px] uppercase font-bold">Capital</span>
-              <span class="font-bold text-amber-900 truncate block">${b.capitalization}</span>
+              <span class="text-slate-400 text-[9px] uppercase font-bold block">Acquired Registration:</span>
+              <span class="font-semibold text-slate-800 truncate block">${regStr}</span>
             </div>
             <div>
-              <span class="text-slate-400 block text-[9px] uppercase font-bold">Priority Need</span>
-              <span class="font-bold text-brand-900 truncate block">${b.supportStrengthen}</span>
+              <span class="text-slate-400 text-[9px] uppercase font-bold block">Support Needed:</span>
+              <span class="font-semibold text-brand-900 truncate block">${supStr}</span>
             </div>
           </div>
 
@@ -917,25 +1696,51 @@
       document.getElementById("quickAssisted").textContent = assisted;
       document.getElementById("quickRate").textContent = `${rate}% assisted`;
       document.getElementById("quickTopSector").textContent = getTopItem(businesses.map(b => b.typeBusiness)) || 'None';
-      document.getElementById("quickTopDemand").textContent = getTopItem(businesses.map(b => b.supportStrengthen)) || 'None';
+      
+      const allNeeds = [];
+      businesses.forEach(b => {
+        if (Array.isArray(b.supportStrengthen)) allNeeds.push(...b.supportStrengthen);
+        else if (b.supportStrengthen) allNeeds.push(b.supportStrengthen);
+      });
+      document.getElementById("quickTopDemand").textContent = getTopItem(allNeeds) || 'None';
     }
 
     function resetDemoData() {
-      if (confirm("Reset database to default sample businesses?")) {
+      if (confirm("Reset BRGY. SALA MSE DATABASE to default sample records?")) {
         businesses = [...SEEDS];
         saveToStorage();
       }
     }
 
     function exportCSV() {
-      let csv = ["Business Name,Proprietor,Sector,Ownership,Employees,Capitalization,Annual Sales,Registration,LGU Assisted,Assistance Type,Priority Need"];
+      let csv = ["Business Name,Owner / Proprietor,Business Address,Sector,Ownership,Employees,Capitalization,Annual Sales,Acquired Registration,LGU Assisted,Satisfaction Status,Satisfaction Feedback,Assistance Type Received,Support Program Needed"];
       businesses.forEach(b => {
-        csv.push([b.businessName, b.ownerName, b.typeBusiness, b.ownership, b.employees, b.capitalization, b.annualSales, b.registration, b.lguReceived, b.assistanceType, b.supportStrengthen].map(v => `"${(v||'').replace(/"/g, '""')}"`).join(","));
+        const regStr = Array.isArray(b.registration) ? b.registration.join('; ') : (b.registration || '');
+        const aidStr = Array.isArray(b.assistanceType) ? b.assistanceType.join('; ') : (b.assistanceType || '');
+        const supStr = Array.isArray(b.supportStrengthen) ? b.supportStrengthen.join('; ') : (b.supportStrengthen || '');
+        
+        csv.push([
+          b.businessName,
+          b.ownerName,
+          b.businessAddress || 'Brgy. Sala',
+          b.typeBusiness,
+          b.ownership,
+          b.employees,
+          b.capitalization,
+          b.annualSales,
+          regStr,
+          b.lguReceived,
+          b.satisfactionRating || '',
+          b.satisfactionFeedback || '',
+          aidStr,
+          supStr
+        ].map(v => `"${(v || '').replace(/"/g, '""')}"`).join(","));
       });
+
       const blob = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `Barangay_MSME_Database_${new Date().toISOString().slice(0,10)}.csv`;
+      a.download = `BRGY_SALA_MSE_DATABASE_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
     }
 
@@ -954,17 +1759,24 @@
 
       const regCounts = {};
       const aidCounts = {};
-      const ownCounts = {};
+      const satCounts = {};
 
       businesses.forEach(b => {
-        regCounts[b.registration] = (regCounts[b.registration] || 0) + 1;
-        aidCounts[b.assistanceType] = (aidCounts[b.assistanceType] || 0) + 1;
-        ownCounts[b.ownership] = (ownCounts[b.ownership] || 0) + 1;
+        const regs = Array.isArray(b.registration) ? b.registration : [b.registration || 'Barangay Permit'];
+        regs.forEach(r => { regCounts[r] = (regCounts[r] || 0) + 1; });
+
+        const aids = Array.isArray(b.assistanceType) ? b.assistanceType : [b.assistanceType || 'None'];
+        aids.forEach(a => { aidCounts[a] = (aidCounts[a] || 0) + 1; });
+
+        if (b.lguReceived === 'Yes') {
+          const sat = b.satisfactionRating || 'Satisfied';
+          satCounts[sat] = (satCounts[sat] || 0) + 1;
+        }
       });
 
       renderStatList("statRegistrationList", regCounts, total);
       renderStatList("statAssistanceList", aidCounts, total);
-      renderStatList("statOwnershipList", ownCounts, total);
+      renderStatList("statSatisfactionList", satCounts, assisted || 1);
     }
 
     function renderStatList(containerId, countObj, total) {
@@ -974,9 +1786,9 @@
         const pct = total > 0 ? Math.round((count / total) * 100) : 0;
         return `
           <div>
-            <div class="flex justify-between text-slate-700 font-semibold mb-1">
-              <span>${key}</span>
-              <span class="text-slate-400 font-mono">${count} (${pct}%)</span>
+            <div class="flex justify-between text-slate-700 font-semibold mb-1 text-[11px]">
+              <span class="truncate pr-2">${key}</span>
+              <span class="text-slate-400 font-mono flex-shrink-0">${count} (${pct}%)</span>
             </div>
             <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
               <div class="bg-brand-500 h-1.5 rounded-full" style="width: ${pct}%"></div>
@@ -988,13 +1800,17 @@
 
     function updateCharts() {
       const countsSec = {};
-      const countsCap = {};
+      const countsReg = {};
       const countsNeed = {};
 
       businesses.forEach(b => {
         countsSec[b.typeBusiness] = (countsSec[b.typeBusiness] || 0) + 1;
-        countsCap[b.capitalization] = (countsCap[b.capitalization] || 0) + 1;
-        countsNeed[b.supportStrengthen] = (countsNeed[b.supportStrengthen] || 0) + 1;
+        
+        const regs = Array.isArray(b.registration) ? b.registration : [b.registration];
+        regs.forEach(r => { if (r) countsReg[r] = (countsReg[r] || 0) + 1; });
+
+        const needs = Array.isArray(b.supportStrengthen) ? b.supportStrengthen : [b.supportStrengthen];
+        needs.forEach(n => { if (n) countsNeed[n] = (countsNeed[n] || 0) + 1; });
       });
 
       if (chart1) chart1.destroy();
@@ -1006,7 +1822,7 @@
             labels: Object.keys(countsSec),
             datasets: [{ 
               data: Object.values(countsSec), 
-              backgroundColor: ['#0a192f', '#f59e0b', '#2563eb', '#10b981', '#8b5cf6', '#ea580c', '#06b6d4'], 
+              backgroundColor: ['#0a192f', '#f59e0b', '#2563eb', '#10b981', '#8b5cf6', '#ea580c', '#06b6d4', '#64748b'], 
               borderWidth: 2, 
               borderColor: '#ffffff' 
             }]
@@ -1022,13 +1838,13 @@
       }
 
       if (chart2) chart2.destroy();
-      const ctx2 = document.getElementById("chartCapital");
+      const ctx2 = document.getElementById("chartRegistrations");
       if (ctx2) {
         chart2 = new Chart(ctx2, {
           type: "bar",
           data: {
-            labels: Object.keys(countsCap),
-            datasets: [{ label: 'Enterprises', data: Object.values(countsCap), backgroundColor: '#f59e0b', borderRadius: 6 }]
+            labels: Object.keys(countsReg),
+            datasets: [{ label: 'Enterprises', data: Object.values(countsReg), backgroundColor: '#f59e0b', borderRadius: 6 }]
           },
           options: { 
             responsive: true, 
@@ -1064,8 +1880,22 @@
       }
     }
 
-    // Initialize UI
-    renderTable();
+    // Initialize Page & App Mode based on URL Hash
+    const initialHash = window.location.hash;
+    if (initialHash === '#register') {
+      switchAppMode('register');
+    } else {
+      switchAppMode('dashboard');
+    }
+
+    // Listen to Hash Changes
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash === '#register') {
+        switchAppMode('register');
+      } else {
+        switchAppMode('dashboard');
+      }
+    });
   </script>
 </body>
 </html>
