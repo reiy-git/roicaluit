@@ -572,10 +572,7 @@
 
           <!-- Add Modal Button -->
           <button onclick="openAddModal()"
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-sun-400 to-sun-500 hover:from-sun-300 hover:to-sun-400 text-brand-950 font-extrabold text-xs rounded-xl shadow-md active:scale-95 transition-all">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-            </svg>
+            class="inline-flex items-center px-3.5 py-2 bg-gradient-to-r from-sun-400 to-sun-500 hover:from-sun-300 hover:to-sun-400 text-brand-950 font-extrabold text-xs rounded-xl shadow-md active:scale-95 transition-all">
             <span class="hidden sm:inline">Register Enterprise</span>
             <span class="sm:hidden">Add</span>
           </button>
@@ -731,10 +728,7 @@
             <div class="flex items-center gap-2">
               <button onclick="openAddModal()"
                 class="px-4 py-2.5 bg-brand-900 hover:bg-brand-950 text-sun-400 font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-                </svg>
-                <span> Add Record</span>
+                <span>Add Record</span>
               </button>
               <button onclick="exportCSV()"
                 class="px-3.5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-xs rounded-xl shadow-card flex items-center justify-center gap-1.5 transition-colors">
@@ -1233,6 +1227,24 @@
                 <span
                   class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Market
                   Linkages</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Business Registration" class="hidden adm-sup-cb" />
+                <span
+                  class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Business
+                  Registration</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Export Assistance" class="hidden adm-sup-cb" />
+                <span
+                  class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Export
+                  Assistance</span>
+              </label>
+              <label class="checkbox-chip cursor-pointer">
+                <input type="checkbox" value="Mentoring and Coaching" class="hidden adm-sup-cb" />
+                <span
+                  class="block px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-xs font-semibold text-center truncate">Mentoring
+                  and Coaching</span>
               </label>
               <label class="checkbox-chip cursor-pointer">
                 <input type="checkbox" value="Others" id="adm_cb_supOthers" onchange="toggleAdminSupOthers()"
