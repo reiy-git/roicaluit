@@ -1594,69 +1594,1242 @@
     let msePlaceMode = false;
 
     const SEEDS = [
-      {
-        businessName: "Sala Sunrise General Store",
-        ownerName: "Elena Santos",
-        businessAddress: "Purok 1, Brgy. Sala, Cabuyao, Laguna",
-        typeBusiness: "Retail",
-        ownership: "Sole Proprietorship",
-        employees: "1 - 4 employees",
-        capitalization: "Less than ₱50,000",
-        annualSales: "Less than ₱500,000",
-        registration: ["Barangay Permit", "DTI"],
-        lguReceived: "Yes",
-        satisfactionRating: "Satisfied",
-        satisfactionFeedback: "Fast processing for local seminar",
-        assistanceType: ["Skills Training", "Business Seminar"],
-        supportStrengthen: ["Access to Financing", "Digital Marketing"]
-      },
-      {
-        businessName: "Laguna Express Wholesale & Trade",
-        ownerName: "Rodrigo Alcantara",
-        businessAddress: "Purok 4, Brgy. Sala, Cabuyao, Laguna",
-        typeBusiness: "Wholesale",
-        ownership: "Partnership",
-        employees: "5 - 9 employees",
-        capitalization: "₱500,001 - ₱3,000,000",
-        annualSales: "₱3 Million - ₱15 Million",
-        registration: ["Barangay Permit", "Mayor's Permit", "DTI", "BIR"],
-        lguReceived: "Yes",
-        satisfactionRating: "Satisfied",
-        satisfactionFeedback: "Helpful equipment support",
-        assistanceType: ["Equipment Assistance", "Product Development"],
-        supportStrengthen: ["Market Linkages", "Access to Financing"]
-      },
-      {
-        businessName: "Sala Digital Shoppe",
-        ownerName: "Patricia Ramos",
-        businessAddress: "Sitio Riverside, Brgy. Sala, Cabuyao, Laguna",
-        typeBusiness: "Online Business",
-        ownership: "Sole Proprietorship",
-        employees: "1 - 4 employees",
-        capitalization: "₱50,000 - ₱500,000",
-        annualSales: "₱500,001 - ₱3 Million",
-        registration: ["DTI", "BIR"],
-        lguReceived: "No",
-        assistanceType: ["None"],
-        supportStrengthen: ["Digital Marketing", "Technology Adoption"]
-      },
-      {
-        businessName: "Cabuyao Fresh Agri Produce",
-        ownerName: "Engr. Mateo Hernandez",
-        businessAddress: "Purok 5, Brgy. Sala, Cabuyao, Laguna",
-        typeBusiness: "Agriculture",
-        ownership: "Cooperative",
-        employees: "10 - 99 employees",
-        capitalization: "Above ₱3,000,000",
-        annualSales: "₱3 Million - ₱15 Million",
-        registration: ["Barangay Permit", "CDA", "BIR"],
-        lguReceived: "Yes",
-        satisfactionRating: "Neutral",
-        satisfactionFeedback: "Needs more market linkage support",
-        assistanceType: ["Marketing Assistance"],
-        supportStrengthen: ["Market Linkages", "Technology Adoption"]
-      }
-    ];
+  {
+    "businessName": "Aqua Eagle",
+    "ownerName": "Eloisa Canillas",
+    "businessAddress": "B2 L6 La Bella Homes, Brgy. Sala, City of Cabuyao, Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit",
+      "Mayor's Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing"
+    ]
+  },
+  {
+    "businessName": "CAZA Automotive Services",
+    "ownerName": "Limuel J. Peñaflor",
+    "businessAddress": "148 Brgy. Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Others"
+    ]
+  },
+  {
+    "businessName": "Mel's Eatery",
+    "ownerName": "Mildred Lonceras",
+    "businessAddress": "Sitio Tanglaw, Sala, Cabuyao",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Partnership",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training"
+    ]
+  },
+  {
+    "businessName": "Bark & Bubbles",
+    "ownerName": "MC Lennon Urmatan",
+    "businessAddress": "#35 Brgy. Sala , Cabuyao, Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training"
+    ]
+  },
+  {
+    "businessName": "Lanie Eatery",
+    "ownerName": "Lanie",
+    "businessAddress": "Shineland Vill, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Others"
+    ]
+  },
+  {
+    "businessName": "AAR Snack Bar",
+    "ownerName": "Mana Liziel Ramos",
+    "businessAddress": "Sitio Tanglaw, Sala, Cabuyao, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing"
+    ]
+  },
+  {
+    "businessName": "Reyjen Glass Aluminum",
+    "ownerName": "Raymond Gutas",
+    "businessAddress": "#R7JP Rizal,  Sala, Cabuyao, Laguna",
+    "typeBusiness": "Manufacturing",
+    "ownership": "Sole Proprietorship",
+    "employees": "5 - 9 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training",
+      "Digital Marketing",
+      "Market Linkages",
+      "Business Registration"
+    ]
+  },
+  {
+    "businessName": "Mars Shop",
+    "ownerName": "Marianne Palisoc",
+    "businessAddress": "B2 L9 Bella Subd., Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "?500,001 - ?3 Million",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing"
+    ]
+  },
+  {
+    "businessName": "Friesilog",
+    "ownerName": "Naric Joy Rodis",
+    "businessAddress": "Nt'l Higway, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "SEC",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "None"
+    ]
+  },
+  {
+    "businessName": "Sata Store",
+    "ownerName": "Jerson Batalla",
+    "businessAddress": "222, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "None"
+    ]
+  },
+  {
+    "businessName": "Rosarian",
+    "ownerName": "Essa",
+    "businessAddress": "137 Jp Rizal, Sala, Cbauyao, Laguna",
+    "typeBusiness": "Wholesale",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "?500,001 - ?3 Million",
+    "registration": [
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "None"
+    ]
+  },
+  {
+    "businessName": "Sonshine Glass & Aluminum Fabricationg",
+    "ownerName": "Son",
+    "businessAddress": "368 JP Rizal, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Digital Marketing",
+      "Product Development",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "Shanea Store",
+    "ownerName": "Anale De Belen",
+    "businessAddress": "B3 L16 Mercedes Village, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training"
+    ]
+  },
+  {
+    "businessName": "Magdalena Sai-sari Store",
+    "ownerName": "Magdalena Tenorio",
+    "businessAddress": "203 Brgy. Sala, City of Cabuyao, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit",
+      "Mayor's Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing"
+    ]
+  },
+  {
+    "businessName": "Arlene Store",
+    "ownerName": "Arlene Lunar",
+    "businessAddress": "Block 2A Lot 9 Multiland, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "None"
+    ]
+  },
+  {
+    "businessName": "Gielo's Bakery",
+    "ownerName": "-",
+    "businessAddress": "Block 11 Lot 10 La bella Homes, Sla, City of Cabuyao, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training"
+    ]
+  },
+  {
+    "businessName": "Mharmhar Sari-sari Store",
+    "ownerName": "Marlon",
+    "businessAddress": "B14 L2 La Bella Homes, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "?500,001 - ?3 Million",
+    "registration": [
+      "DTI",
+      "Barangay Permit"
+    ],
+    "lguReceived": "Yes",
+    "satisfactionRating": "Dissatisfied",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "Financial Assistance"
+    ],
+    "supportStrengthen": [
+      "None"
+    ]
+  },
+  {
+    "businessName": "Rose Sari-sari Store",
+    "ownerName": "Rose Angeline Bagor",
+    "businessAddress": "Multiland III, Sala, City of Cabuyao, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Business Registration"
+    ]
+  },
+  {
+    "businessName": "Aera Cafe",
+    "ownerName": "Jane Sarah Alcabasa",
+    "businessAddress": "80 Bella Subd., Sala, Cabuyao City, Laguna 4025",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training",
+      "Digital Marketing",
+      "Product Development",
+      "Technology Adoption",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "Healthguard ABC and Vaccination Clinic",
+    "ownerName": "Daniella Cepillo",
+    "businessAddress": "28 JPRizal St., Sla, Cabuyao City, Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Partnership",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Digital Marketing",
+      "Product Development",
+      "Technology Adoption"
+    ]
+  },
+  {
+    "businessName": "Nor-An Store",
+    "ownerName": "Ana Cornejo",
+    "businessAddress": "B2 L8 Multiland III, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Others"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "None"
+    ]
+  },
+  {
+    "businessName": "k & 2 Bakery",
+    "ownerName": "-",
+    "businessAddress": "Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Mayor's Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "None"
+    ]
+  },
+  {
+    "businessName": "Padayon Cafe",
+    "ownerName": "-",
+    "businessAddress": "Blk 5 Lot 1, La Bella Home, Cabuyao City, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Partnership",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "N/A"
+    ]
+  },
+  {
+    "businessName": "Triple M Laundy",
+    "ownerName": "Chloe",
+    "businessAddress": "La Bella Home, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Entrepreneurship Training",
+      "Digital Marketing",
+      "Product Development",
+      "Technology Adoption",
+      "Market Linkages",
+      "Business Registration",
+      "Export Assistance",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "Golden Pizza",
+    "ownerName": "Jenilyn Mendoza",
+    "businessAddress": "B10 L41 La Bella Homes, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit"
+    ],
+    "lguReceived": "Yes",
+    "satisfactionRating": "Satisfied",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "Skills Training"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Entrepreneurship Training",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "NRC Store",
+    "ownerName": "Rhiza",
+    "businessAddress": "La Bella Homes, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training"
+    ]
+  },
+  {
+    "businessName": "Myramart",
+    "ownerName": "-",
+    "businessAddress": "Blk 5 Lot 2 La Bella Homes, Sala, Cabyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "None"
+    ]
+  },
+  {
+    "businessName": "MTrdae I Store",
+    "ownerName": "Marte Gwen",
+    "businessAddress": "B7 L4 Gold St., Shineland Vill., Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Digital Marketing"
+    ]
+  },
+  {
+    "businessName": "Venus Store",
+    "ownerName": "Dorina Galope",
+    "businessAddress": "Gineland Vill., Brgy. Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Entrepreneurship Training",
+      "Digital Marketing",
+      "Technology Adoption"
+    ]
+  },
+  {
+    "businessName": "AC Batallones Construction Services",
+    "ownerName": "Adrian",
+    "businessAddress": "B11 L 13, Brgy. Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Sole Proprietorship",
+    "employees": "10-49",
+    "capitalization": "Above ?3,000,000",
+    "annualSales": "?3 Million - ?15 Million",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "Yes",
+    "satisfactionRating": "Neutral",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "Business registration assistance"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Entrepreneurship Training",
+      "Digital Marketing",
+      "Product Development",
+      "Technology Adoption",
+      "Market Linkages",
+      "Business Registration",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "Siomai Queen",
+    "ownerName": "Estrella Monteverde",
+    "businessAddress": "Stall #7 Suki Mart Sala Branch, Cabuyao City, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Mayor's Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "N/A"
+    ]
+  },
+  {
+    "businessName": "Motorcentral Sala Branch",
+    "ownerName": "Michael Gutierrez",
+    "businessAddress": "2A JP Rizal St, Sundrell Business Center, Cabuyao City, Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Corporation",
+    "employees": "5 - 9 employees",
+    "capitalization": "?500,001 - ?3,000,000",
+    "annualSales": "?500,001 - ?3 Million",
+    "registration": [
+      "DTI",
+      "SEC",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Entrepreneurship Training",
+      "Digital Marketing",
+      "Product Development",
+      "Technology Adoption",
+      "Market Linkages",
+      "Business Registration",
+      "Export Assistance",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "Golden Leaf Cabuyao",
+    "ownerName": "Akisha Panaligan",
+    "businessAddress": "Brgy, Sundrel Business Center, 25 JP Rizal St, Sala, Cabuyao City, 4025 Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "?500,001 - ?3,000,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "Chyll Zach Auto Care Services",
+    "ownerName": "Sherwin Amado",
+    "businessAddress": "101 JP Rizal St., Sala, City of Cabuyao, Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "?500,001 - ?3 Million",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Entrepreneurship Training",
+      "Digital Marketing",
+      "Product Development",
+      "Technology Adoption",
+      "Business Registration",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "victore sari-sari store",
+    "ownerName": "victore",
+    "businessAddress": "JP Rizal St., Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Others"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "None"
+    ]
+  },
+  {
+    "businessName": "Ben's Halo-Halo",
+    "ownerName": "Ashley Estacio",
+    "businessAddress": "JP RizalSt., Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Partnership",
+    "employees": "5 - 9 employees",
+    "capitalization": "?500,001 - ?3,000,000",
+    "annualSales": "?3 Million - ?15 Million",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "Mench sari-sari store",
+    "ownerName": "Menchue Camposo",
+    "businessAddress": "#3JP Rizal St., Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI"
+    ],
+    "lguReceived": "Yes",
+    "satisfactionRating": "Neutral",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "Financial Assistance"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training"
+    ]
+  },
+  {
+    "businessName": "Seika Japanese Wine & Liquor",
+    "ownerName": "-",
+    "businessAddress": "Multiland III, Sala, City of Cabuyao, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Partnership",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training",
+      "Digital Marketing",
+      "Technology Adoption"
+    ]
+  },
+  {
+    "businessName": "Calvary Printing Shop",
+    "ownerName": "Marinelle Sacman",
+    "businessAddress": "Blk 3 Lot 17 Multiland III Subdivision, Brgy. Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "N/A"
+    ]
+  },
+  {
+    "businessName": "Tifaan",
+    "ownerName": "Aizel Reolada",
+    "businessAddress": "#333 Gold Ave. Shineland Village, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Manufacturing",
+    "ownership": "Partnership",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "N/A"
+    ]
+  },
+  {
+    "businessName": "Naneth sari-sari store",
+    "ownerName": "Naneth Monteverde",
+    "businessAddress": "Blk 21 Lot 42 La Bella Homes, Brgy. Sal, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Others",
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Digital Marketing",
+      "Product Development",
+      "Technology Adoption",
+      "Business Registration"
+    ]
+  },
+  {
+    "businessName": "Azil sari-sari store",
+    "ownerName": "Rodrigo Calma",
+    "businessAddress": "B9 L8 Casa Experanza, Brgy. Sal, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Entrepreneurship Training",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "Chicken Things",
+    "ownerName": "Jestoni Hercia",
+    "businessAddress": "Blk 5 Lot 4 Casa Esperanza, Sla, Cabuyao City, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Others",
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Entrepreneurship Training",
+      "Digital Marketing",
+      "Product Development",
+      "Technology Adoption",
+      "Market Linkages",
+      "Business Registration",
+      "Export Assistance",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "Petty Pet Supplies",
+    "ownerName": "Jocelyn Villareal",
+    "businessAddress": "282 Gold, Shineland Village, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Entrepreneurship Training"
+    ]
+  },
+  {
+    "businessName": "Marites store",
+    "ownerName": "marites",
+    "businessAddress": "Blk 7 L15 Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "Barangay Permit"
+    ],
+    "lguReceived": "Yes",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "Others",
+      "Others: Ayuda"
+    ],
+    "supportStrengthen": [
+      "Digital Marketing"
+    ]
+  },
+  {
+    "businessName": "Lyncelvie Water Refiling Station",
+    "ownerName": "Evelyn Mangio",
+    "businessAddress": "318 Gold St. Shineland, Sala, Cabuyao City, Laguna",
+    "typeBusiness": "Food and Beverage",
+    "ownership": "Partnership",
+    "employees": "1 - 4 employees",
+    "capitalization": "?50,000 - ?500,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Business Registration"
+    ]
+  },
+  {
+    "businessName": "Emil Gas House",
+    "ownerName": "Emil",
+    "businessAddress": "#127 JP Rizal St., Sala Cabuyao City, Laguna",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "Yes",
+    "satisfactionRating": "Neutral",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "Business registration assistance"
+    ],
+    "supportStrengthen": [
+      "Business Registration"
+    ]
+  },
+  {
+    "businessName": "Cycle Wash Laundromat",
+    "ownerName": "Che Punongbayan",
+    "businessAddress": "#140 JP Rizal St., Sala, Cabuyao City Laguna",
+    "typeBusiness": "Service",
+    "ownership": "Partnership",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "Entrepreneurship Training",
+      "Technology Adoption",
+      "Mentoring and Coaching"
+    ]
+  },
+  {
+    "businessName": "JR'S AUTO PARTS",
+    "ownerName": "n/a",
+    "businessAddress": "National highway",
+    "typeBusiness": "Retail",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Barangay Permit",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "No",
+    "satisfactionRating": "N/A",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "None"
+    ],
+    "supportStrengthen": [
+      "None"
+    ]
+  },
+  {
+    "businessName": "RICA SALON SPA",
+    "ownerName": "ERICSON ANTONIO",
+    "businessAddress": "cabuyao bayan, b2 lot4",
+    "typeBusiness": "Service",
+    "ownership": "Sole Proprietorship",
+    "employees": "1 - 4 employees",
+    "capitalization": "Less than ?50,000",
+    "annualSales": "Less than ?500,000",
+    "registration": [
+      "DTI",
+      "Mayor's Permit",
+      "BIR"
+    ],
+    "lguReceived": "Yes",
+    "satisfactionRating": "Neutral",
+    "satisfactionFeedback": "",
+    "assistanceType": [
+      "Business Seminar"
+    ],
+    "supportStrengthen": [
+      "Access to Financing",
+      "Entrepreneurship Training",
+      "Technology Adoption",
+      "Market Linkages"
+    ]
+  }
+];
 
     let businesses = JSON.parse(localStorage.getItem("brgy_sala_mse_records")) || [...SEEDS];
     let currentSectorFilter = "ALL";
