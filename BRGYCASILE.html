@@ -12,6 +12,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
     rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
   <!-- Tailwind CSS, Chart.js & QRCode.js -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -120,6 +122,25 @@
       color: #fbbf24;
       border-color: #0a192f;
       box-shadow: 0 2px 4px rgba(10, 25, 47, 0.15);
+    }
+
+    #mseMap {
+      min-height: 360px;
+      z-index: 0;
+    }
+
+    .mse-map-filter.active {
+      background: #0a192f;
+      color: #fbbf24;
+      border-color: #0a192f;
+    }
+
+    .mse-map-marker {
+      width: 18px;
+      height: 18px;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgb(15 23 42 / 35%);
     }
   </style>
 </head>
@@ -612,6 +633,10 @@
               </svg>
               Metric Scorecard
             </button>
+            <button onclick="switchTab('map')" id="nav-map"
+              class="px-3 py-1.5 rounded-lg font-semibold text-slate-300 hover:text-white hover:bg-brand-800/50 transition-all whitespace-nowrap flex items-center gap-1.5">
+              Enterprise Map
+            </button>
           </nav>
 
           <button onclick="switchAppMode('register')"
@@ -912,6 +937,29 @@
 
         </div>
 
+      </section>
+
+      <!-- TAB 4: ENTERPRISE MAP -->
+      <section id="view-map" class="hidden space-y-4 sm:space-y-6 fade-enter">
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card space-y-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-black text-slate-900">Enterprise Map</h2>
+            <p class="text-xs text-slate-500 mt-1">Explore registered micro and small enterprises in Barangay Sala.</p>
+          </div>
+          <div id="mseMapFilters" class="flex flex-wrap gap-2" aria-label="Filter businesses by sector">
+            <button type="button" class="mse-map-filter active px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="ALL" aria-pressed="true">All Sectors</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Retail" aria-pressed="false">Retail</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Wholesale" aria-pressed="false">Wholesale</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Food & Bev" aria-pressed="false">Food &amp; Bev</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Agriculture" aria-pressed="false">Agriculture</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Service" aria-pressed="false">Service</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Manufacturing" aria-pressed="false">Manufacturing</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Online Business" aria-pressed="false">Online Business</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Others" aria-pressed="false">Others</button>
+          </div>
+          <div id="mseMap" class="w-full rounded-xl border border-slate-200 overflow-hidden" role="application" aria-label="Map of registered enterprises"></div>
+          <p class="text-[10px] text-slate-400">Map data © OpenStreetMap contributors</p>
+        </div>
       </section>
 
     </main>
@@ -1369,7 +1417,18 @@
   </footer>
 
   <!-- ================= APPLICATION SCRIPT ================= -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
+    const mseData = [
+      { name: "Sala Sunrise General Store", sector: "Retail", lat: 14.261, lng: 121.122 },
+      { name: "Laguna Express Wholesale & Trade", sector: "Wholesale", lat: 14.264, lng: 121.125 },
+      { name: "Sala Digital Shoppe", sector: "Online Business", lat: 14.262, lng: 121.128 },
+      { name: "Cabuyao Fresh Agri Produce", sector: "Agriculture", lat: 14.266, lng: 121.121 }
+    ];
+    let mseMap;
+    let mseMarkers;
+
     const SEEDS = [
       {
         businessName: "Sala Sunrise General Store",
@@ -1466,7 +1525,7 @@
 
     // Tab switcher inside Admin Dashboard
     function switchTab(tabId) {
-      ['records', 'analytics', 'summary'].forEach(t => {
+      ['records', 'analytics', 'summary', 'map'].forEach(t => {
         document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tabId);
         const btn = document.getElementById(`nav-${t}`);
         if (t === tabId) {
@@ -1477,6 +1536,65 @@
       });
       if (tabId === 'analytics') setTimeout(updateCharts, 50);
       if (tabId === 'summary') updateScorecard();
+      if (tabId === 'map') {
+        setTimeout(() => {
+          initializeMseMap();
+          mseMap.invalidateSize();
+        }, 50);
+      }
+    }
+
+    function initializeMseMap() {
+      if (!mseMap) {
+        mseMap = L.map('mseMap').setView([14.263, 121.124], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mseMap);
+        mseMarkers = L.layerGroup().addTo(mseMap);
+        document.getElementById('mseMapFilters').addEventListener('click', event => {
+          const button = event.target.closest('button[data-sector]');
+          if (!button) return;
+          document.querySelectorAll('.mse-map-filter').forEach(filterButton => {
+            const isActive = filterButton === button;
+            filterButton.classList.toggle('active', isActive);
+            filterButton.setAttribute('aria-pressed', String(isActive));
+          });
+          renderMseMarkers(button.dataset.sector);
+        });
+        renderMseMarkers('ALL');
+      }
+    }
+
+    function renderMseMarkers(selectedSector) {
+      mseMarkers.clearLayers();
+      const sectorColors = {
+        Retail: '#ef4444',
+        Wholesale: '#eab308',
+        'Online Business': '#3b82f6',
+        Agriculture: '#22c55e'
+      };
+      const businessesToShow = selectedSector === 'ALL'
+        ? mseData
+        : mseData.filter(business => business.sector === selectedSector);
+
+      businessesToShow.forEach(business => {
+        const popup = document.createElement('div');
+        const name = document.createElement('strong');
+        name.textContent = business.name;
+        const sector = document.createElement('div');
+        sector.textContent = business.sector;
+        popup.append(name, sector);
+
+        L.marker([business.lat, business.lng], {
+          icon: L.divIcon({
+            className: '',
+            html: `<span class="mse-map-marker" style="display:block;background:${sectorColors[business.sector] || '#64748b'}"></span>`,
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
+          })
+        }).bindPopup(popup).addTo(mseMarkers);
+      });
     }
 
     function setFilterSector(sector) {

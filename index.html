@@ -12,6 +12,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
     rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
   <!-- Tailwind CSS, Chart.js & QRCode.js -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -120,6 +122,92 @@
       color: #fbbf24;
       border-color: #0a192f;
       box-shadow: 0 2px 4px rgba(10, 25, 47, 0.15);
+    }
+
+    #mseMap {
+      height: min(62vh, 680px);
+      min-height: 400px;
+      z-index: 0;
+    }
+
+    .mse-map-filter.active {
+      background: #0a192f;
+      color: #fbbf24;
+      border-color: #0a192f;
+    }
+
+    .mse-map-marker {
+      width: 28px;
+      height: 28px;
+      border: 3px solid #111827;
+      border-radius: 1px;
+      box-shadow: 0 1px 4px rgb(15 23 42 / 50%);
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    .mse-map-business-icon {
+      position: relative;
+      width: 240px;
+      height: 36px;
+    }
+
+    .mse-map-business-label {
+      position: absolute;
+      top: 3px;
+      left: 38px;
+      max-width: 194px;
+      overflow: hidden;
+      padding: 3px 6px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      background: #fff;
+      box-shadow: 0 1px 4px rgb(15 23 42 / 24%);
+      color: #0f172a;
+      font: 700 11px/1.3 "Plus Jakarta Sans", sans-serif;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .mse-map-business-label-editing {
+      border: 2px solid #f59e0b;
+      background: #fffbeb;
+    }
+
+    .mse-map-marker::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border: 1px solid rgb(255 255 255 / 90%);
+    }
+
+    .mse-map-marker-reference {
+      width: 18px;
+      height: 18px;
+      border-width: 2px;
+    }
+
+    .mse-map-marker-reference::after {
+      inset: 2px;
+    }
+
+    .mse-map-marker-editing {
+      border-color: #111827;
+      box-shadow: 0 0 0 4px #fbbf24, 0 2px 9px rgb(15 23 42 / 55%);
+      z-index: 1000;
+    }
+
+    .mse-editing-banner {
+      border-left: 4px solid #f59e0b;
+    }
+
+    .mse-map-marker-reference {
+      width: 15px;
+      height: 15px;
+      border: 2px solid #fff;
+      border-radius: 1px;
+      box-shadow: 0 1px 5px rgb(15 23 42 / 45%);
     }
   </style>
 </head>
@@ -638,6 +726,10 @@
               </svg>
               Metric Scorecard
             </button>
+            <button onclick="switchTab('map')" id="nav-map"
+              class="px-3 py-1.5 rounded-lg font-semibold text-slate-300 hover:text-white hover:bg-brand-800/50 transition-all whitespace-nowrap flex items-center gap-1.5">
+              Enterprise Map
+            </button>
           </nav>
 
           <button onclick="switchAppMode('register')"
@@ -938,6 +1030,85 @@
 
         </div>
 
+      </section>
+
+      <!-- TAB 4: ENTERPRISE MAP -->
+      <section id="view-map" class="hidden space-y-4 sm:space-y-6 fade-enter">
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card space-y-4">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 class="text-base sm:text-lg font-black text-slate-900">Master Registry Enterprise Map</h2>
+              <p class="text-xs text-slate-500 mt-1">Find and update mapped locations for enterprises in the Barangay Sala master registry.</p>
+            </div>
+            <div class="flex gap-2">
+              <label class="sr-only" for="mseMapSearch">Search businesses on the map</label>
+              <input id="mseMapSearch" type="search" placeholder="Find a business..." autocomplete="off"
+                class="min-w-0 flex-1 sm:w-56 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
+              <button type="button" onclick="zoomToSala()"
+                class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50">
+                Fit Sala
+              </button>
+            </div>
+          </div>
+          <div id="mseMapFilters" class="flex flex-wrap gap-2" aria-label="Filter businesses by sector">
+            <button type="button" class="mse-map-filter active px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="ALL" aria-pressed="true">All Sectors</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Retail" aria-pressed="false">Retail</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Wholesale" aria-pressed="false">Wholesale</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Food & Bev" aria-pressed="false">Food &amp; Bev</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Agriculture" aria-pressed="false">Agriculture</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Service" aria-pressed="false">Service</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Manufacturing" aria-pressed="false">Manufacturing</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Online Business" aria-pressed="false">Online Business</button>
+            <button type="button" class="mse-map-filter px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold transition-colors" data-sector="Others" aria-pressed="false">Others</button>
+          </div>
+          
+          <div id="mseMap" class="w-full rounded-xl border border-slate-200 overflow-hidden" role="application" aria-label="Map of master registry enterprises"></div>
+          <div id="mseMapStatus" class="rounded-lg bg-slate-50 px-3 py-2 text-[11px] text-slate-600" aria-live="polite">Master registry pins are approximate sample locations. Click a named square to identify it; drag a square to update its location.</div>
+          <div id="mseEditor" class="hidden space-y-3 rounded-xl border border-amber-300 bg-amber-50/60 p-4">
+            <div id="mseEditingBanner" class="mse-editing-banner hidden rounded-lg bg-amber-100 px-3 py-2.5" aria-live="polite">
+              <p id="mseEditingLabel" class="text-[10px] font-extrabold uppercase tracking-wider text-amber-900">Now editing</p>
+              <p id="mseEditingBusinessName" class="mt-0.5 break-words text-sm font-black text-slate-900"></p>
+            </div>
+            <div>
+              <h3 id="mseEditorTitle" class="text-sm font-extrabold text-slate-900">Edit master registry business location</h3>
+              <p id="mseEditorHelp" class="mt-1 text-[11px] text-slate-600">Click inside the Sala boundary on the map to place a pin, or enter its coordinates.</p>
+            </div>
+            <form id="mseEditorForm" class="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <label class="text-[11px] font-bold text-slate-600 sm:col-span-2">Business name
+                <input id="mseNameInput" required maxlength="120" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900" placeholder="Business name" />
+              </label>
+              <label class="text-[11px] font-bold text-slate-600">Sector
+                <select id="mseSectorInput" required class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900">
+                  <option>Retail</option>
+                  <option>Wholesale</option>
+                  <option>Food &amp; Bev</option>
+                  <option>Agriculture</option>
+                  <option>Service</option>
+                  <option>Manufacturing</option>
+                  <option>Online Business</option>
+                  <option>Others</option>
+                </select>
+              </label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="text-[11px] font-bold text-slate-600">Latitude
+                  <input id="mseLatInput" required type="number" step="any" min="14.2554583" max="14.2780404" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-2 text-xs font-medium text-slate-900" />
+                </label>
+                <label class="text-[11px] font-bold text-slate-600">Longitude
+                  <input id="mseLngInput" required type="number" step="any" min="121.1138224" max="121.1398502" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-2 text-xs font-medium text-slate-900" />
+                </label>
+              </div>
+              <div class="sm:col-span-2 lg:col-span-4 flex flex-wrap gap-2">
+                <button id="mseSaveButton" type="submit" class="rounded-lg bg-brand-900 px-4 py-2 text-xs font-bold text-white hover:bg-brand-800">Add business</button>
+                <button type="button" onclick="cancelMseEdit()" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100">Cancel</button>
+              </div>
+            </form>
+          </div>
+          <div>
+            <h3 class="mb-2 text-xs font-extrabold uppercase tracking-wide text-slate-500">Master registry businesses</h3>
+            <div id="mseBusinessList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"></div>
+          </div>
+          <p class="text-[10px] text-slate-400">Map tiles and the Sala boundary © OpenStreetMap contributors. Enterprise names and sectors come only from the master registry. Pin updates are stored locally in this browser.</p>
+        </div>
       </section>
 
     </main>
@@ -1400,7 +1571,28 @@
   </footer>
 
   <!-- ================= APPLICATION SCRIPT ================= -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
+    const mseSeedData = [
+      { id: "sample-retail", name: "Sala Sunrise General Store", sector: "Retail", lat: 14.261, lng: 121.122 },
+      { id: "sample-wholesale", name: "Laguna Express Wholesale & Trade", sector: "Wholesale", lat: 14.264, lng: 121.124 },
+      { id: "sample-online", name: "Sala Digital Shoppe", sector: "Online Business", lat: 14.2655, lng: 121.128 },
+      { id: "sample-agriculture", name: "Cabuyao Fresh Agri Produce", sector: "Agriculture", lat: 14.266, lng: 121.121 }
+    ];
+    const MSE_STORAGE_KEY = "brgy_sala_mse_map_locations";
+    const SALA_BOUNDARY_URL = "https://nominatim.openstreetmap.org/lookup?osm_ids=R18461908&format=jsonv2&polygon_geojson=1";
+    const SALA_MAP_BOUNDS = [[14.2554583, 121.1138224], [14.2780404, 121.1398502]];
+    let mseStorageWarning = "";
+    let mseData = [];
+    let mseMap;
+    let mseMarkers;
+    let mseBoundaryLayer;
+    let mseBoundaryGeometry;
+    let currentMseSectorFilter = "ALL";
+    let mseEditingId = null;
+    let msePlaceMode = false;
+
     const SEEDS = [
       {
         businessName: "Sala Sunrise General Store",
@@ -1472,9 +1664,11 @@
 
     function saveToStorage() {
       localStorage.setItem("brgy_sala_mse_records", JSON.stringify(businesses));
+      syncMseDataWithMasterRecords();
       renderTable();
       updateCharts();
       updateScorecard();
+      if (mseMap) renderMseMarkers();
     }
 
     // App View Mode (dashboard vs register public mode)
@@ -1497,7 +1691,7 @@
 
     // Tab switcher inside Admin Dashboard
     function switchTab(tabId) {
-      ['records', 'analytics', 'summary'].forEach(t => {
+      ['records', 'analytics', 'summary', 'map'].forEach(t => {
         document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tabId);
         const btn = document.getElementById(`nav-${t}`);
         if (t === tabId) {
@@ -1508,8 +1702,452 @@
       });
       if (tabId === 'analytics') setTimeout(updateCharts, 50);
       if (tabId === 'summary') updateScorecard();
+      if (tabId === 'map') {
+        setTimeout(() => {
+          initializeMseMap();
+          mseMap.invalidateSize();
+        }, 50);
+      }
     }
 
+    function getMasterRegistryMapData() {
+      const previousLocations = loadSavedMseLocations();
+      const usedLocationIds = new Set();
+
+      return businesses.map((record, index) => {
+        const recordName = String(record.businessName || '').trim();
+        const sector = normalizeMseSector(record.typeBusiness);
+        const savedLocationIndex = previousLocations.findIndex(location =>
+          !usedLocationIds.has(location.id) && location.name === recordName
+        );
+        const savedLocation = savedLocationIndex >= 0 ? previousLocations[savedLocationIndex] : null;
+        if (savedLocation) usedLocationIds.add(savedLocation.id);
+
+        const fallbackLocation = mseSeedData.find(location => location.name === recordName) ||
+          getDefaultMseLocation(index);
+        return {
+          id: `registry-${index}-${recordName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'enterprise'}`,
+          name: recordName || `Unnamed enterprise ${index + 1}`,
+          sector,
+          lat: savedLocation ? savedLocation.lat : fallbackLocation.lat,
+          lng: savedLocation ? savedLocation.lng : fallbackLocation.lng
+        };
+      });
+    }
+
+    function loadSavedMseLocations() {
+      try {
+        const savedData = localStorage.getItem(MSE_STORAGE_KEY);
+        if (!savedData) return [];
+        const parsedData = JSON.parse(savedData);
+        if (!Array.isArray(parsedData)) throw new Error('Saved map locations are not in the expected format.');
+        return parsedData.filter(business =>
+          business && typeof business.id === 'string' && typeof business.name === 'string' &&
+          Number.isFinite(Number(business.lat)) && Number.isFinite(Number(business.lng))
+        ).map(business => ({ ...business, lat: Number(business.lat), lng: Number(business.lng) }));
+      } catch (error) {
+        console.error('Could not load saved map locations:', error);
+        mseStorageWarning = 'Saved map locations could not be loaded. Master registry records are using approximate locations.';
+        return [];
+      }
+    }
+
+    function normalizeMseSector(sector) {
+      const value = String(sector || '').trim();
+      if (value === 'Food and Beverage') return 'Food & Bev';
+      if (value.startsWith('Others:')) return 'Others';
+      return value || 'Others';
+    }
+
+    function getDefaultMseLocation(index) {
+      const locations = [
+        [14.2660, 121.1210], [14.2668, 121.1230], [14.2654, 121.1250],
+        [14.2673, 121.1242], [14.2649, 121.1225], [14.2681, 121.1260]
+      ];
+      const [lat, lng] = locations[index % locations.length];
+      return { lat, lng };
+    }
+
+    function syncMseDataWithMasterRecords() {
+      mseData = getMasterRegistryMapData();
+    }
+
+    function initializeMseMap() {
+      syncMseDataWithMasterRecords();
+      if (!mseMap) {
+        mseMap = L.map('mseMap', {
+          maxBounds: SALA_MAP_BOUNDS,
+          maxBoundsViscosity: 0.9
+        }).setView([14.2667416, 121.1200223], 15);
+        setMseMapStatus(mseStorageWarning || 'Loading the mapped Sala boundary from OpenStreetMap…');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mseMap);
+        mseMarkers = L.layerGroup().addTo(mseMap);
+        mseMap.on('click', event => {
+          if (!msePlaceMode) return;
+          setMseEditorCoordinates(event.latlng.lat, event.latlng.lng);
+          if (!isInsideSalaBoundary(event.latlng.lat, event.latlng.lng)) {
+            setMseMapStatus('That point is outside the Sala boundary. Choose a location inside the outlined barangay.');
+            return;
+          }
+          setMseMapStatus('Map position selected. Save the business to keep this location.');
+        });
+        document.getElementById('mseMapFilters').addEventListener('click', event => {
+          const button = event.target.closest('button[data-sector]');
+          if (!button) return;
+          currentMseSectorFilter = button.dataset.sector;
+          document.querySelectorAll('.mse-map-filter').forEach(filterButton => {
+            const isActive = filterButton === button;
+            filterButton.classList.toggle('active', isActive);
+            filterButton.setAttribute('aria-pressed', String(isActive));
+          });
+          renderMseMarkers();
+        });
+        document.getElementById('mseMapSearch').addEventListener('input', event => {
+          const query = event.target.value.trim().toLocaleLowerCase();
+          const match = mseData.find(business => business.name.toLocaleLowerCase().includes(query));
+          if (!query) {
+            renderMseMarkers();
+            setMseMapStatus('Showing all businesses. Click a named square to identify it; drag a square to update its location.');
+          } else if (match) {
+            currentMseSectorFilter = 'ALL';
+            updateMseSectorButtons();
+            renderMseMarkers();
+            focusMseBusiness(match.id);
+          } else {
+            setMseMapStatus(`No master registry business named “${event.target.value.trim()}” was found.`);
+          }
+        });
+        document.getElementById('mseEditorForm').addEventListener('submit', saveMseEditor);
+        renderMseMarkers();
+        renderMseBusinessList();
+        if (mseStorageWarning) setMseMapStatus(mseStorageWarning);
+        loadSalaBoundary();
+      }
+    }
+
+    async function loadSalaBoundary() {
+      try {
+        const response = await fetch(SALA_BOUNDARY_URL);
+        if (!response.ok) throw new Error(`Boundary request failed with HTTP ${response.status}.`);
+        const locations = await response.json();
+        mseBoundaryGeometry = locations[0] && locations[0].geojson;
+        if (!mseBoundaryGeometry) throw new Error('The geocoder returned no Sala boundary geometry.');
+        mseBoundaryLayer = L.geoJSON(mseBoundaryGeometry, {
+          interactive: false,
+          style: { color: '#0f766e', weight: 3, dashArray: '7 5', fillColor: '#14b8a6', fillOpacity: 0.08 }
+        }).addTo(mseMap);
+        mseBoundaryLayer.bringToBack();
+        mseMap.fitBounds(mseBoundaryLayer.getBounds(), { padding: [20, 20], maxZoom: 15 });
+        renderMseMarkers();
+        setMseMapStatus(`${mseStorageWarning ? `${mseStorageWarning} ` : ''}Showing the OpenStreetMap boundary for Sala, Cabuyao. Sample pins are approximate; drag or edit to set actual storefront positions.`);
+      } catch (error) {
+        console.error('Could not load Sala boundary from OpenStreetMap:', error);
+        setMseMapStatus(`${mseStorageWarning ? `${mseStorageWarning} ` : ''}Could not load Sala boundary data. Map pins still work; verify every location before saving.`);
+      }
+    }
+
+    function isPointInRing(latitude, longitude, ring) {
+      let inside = false;
+      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const xi = ring[i][0], yi = ring[i][1];
+        const xj = ring[j][0], yj = ring[j][1];
+        const crossesLatitude = (yi > latitude) !== (yj > latitude);
+        if (crossesLatitude && longitude < ((xj - xi) * (latitude - yi)) / (yj - yi) + xi) {
+          inside = !inside;
+        }
+      }
+      return inside;
+    }
+
+    function isInsideSalaBoundary(latitude, longitude) {
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return false;
+      if (latitude < SALA_MAP_BOUNDS[0][0] || latitude > SALA_MAP_BOUNDS[1][0] ||
+        longitude < SALA_MAP_BOUNDS[0][1] || longitude > SALA_MAP_BOUNDS[1][1]) return false;
+      if (!mseBoundaryGeometry) return true;
+
+      const polygons = mseBoundaryGeometry.type === 'Polygon'
+        ? [mseBoundaryGeometry.coordinates]
+        : mseBoundaryGeometry.coordinates;
+      return polygons.some(rings =>
+        isPointInRing(latitude, longitude, rings[0]) &&
+        !rings.slice(1).some(ring => isPointInRing(latitude, longitude, ring))
+      );
+    }
+
+    function matchesMseSector(business, selectedSector) {
+      if (selectedSector === 'ALL') return true;
+      if (selectedSector === 'Food & Bev') {
+        return business.sector === 'Food & Bev' || business.sector === 'Food and Beverage';
+      }
+      return business.sector === selectedSector;
+    }
+
+    function updateMseSectorButtons() {
+      document.querySelectorAll('.mse-map-filter').forEach(button => {
+        const isActive = button.dataset.sector === currentMseSectorFilter;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+      });
+    }
+
+    function createMseMarkerIcon(business, isEditing = false) {
+      const sectorColors = {
+        Retail: '#ef4444',
+        Wholesale: '#eab308',
+        'Food & Bev': '#f97316',
+        'Food and Beverage': '#f97316',
+        Agriculture: '#22c55e',
+        Service: '#8b5cf6',
+        Manufacturing: '#64748b',
+        'Online Business': '#3b82f6',
+        Others: '#0f766e'
+      };
+      const color = sectorColors[business.sector] || '#0f766e';
+      const markerClass = [
+        'mse-map-marker',
+        isEditing ? 'mse-map-marker-editing' : ''
+      ].filter(Boolean).join(' ');
+      const size = 28;
+      let iconContent = `<span class="${markerClass}" style="display:block;background:${color}"></span>`;
+      let iconSize = [size, size];
+      let iconAnchor = [size / 2, size / 2];
+      {
+        const icon = document.createElement('span');
+        icon.className = 'mse-map-business-icon';
+        const square = document.createElement('span');
+        square.className = markerClass;
+        square.style.cssText = `position:absolute;left:0;top:4px;display:block;background:${color}`;
+        const label = document.createElement('span');
+        label.className = `mse-map-business-label${isEditing ? ' mse-map-business-label-editing' : ''}`;
+        label.textContent = business.name;
+        icon.append(square, label);
+        iconContent = icon;
+        iconSize = [240, 36];
+        iconAnchor = [14, 18];
+      }
+      return L.divIcon({
+        className: '',
+        html: iconContent,
+        iconSize,
+        iconAnchor
+      });
+    }
+
+    function createMsePopup(business) {
+      const popup = document.createElement('div');
+      const name = document.createElement('strong');
+      name.textContent = business.name;
+      const sector = document.createElement('div');
+      sector.textContent = business.sector;
+      const source = document.createElement('div');
+      source.className = 'mt-1 text-xs text-slate-500';
+      source.textContent = 'Master registry record';
+      popup.append(name, sector, source);
+
+      const actions = document.createElement('div');
+      actions.className = 'mt-2 flex gap-2';
+      const editButton = document.createElement('button');
+      editButton.type = 'button';
+      editButton.textContent = 'Edit location';
+      editButton.className = 'rounded bg-slate-800 px-2 py-1 text-white';
+      editButton.addEventListener('click', () => startEditMseBusiness(business.id));
+      actions.append(editButton);
+      popup.append(actions);
+      return popup;
+    }
+
+    function renderMseMarkers() {
+      mseMarkers.clearLayers();
+      mseData.filter(business => matchesMseSector(business, currentMseSectorFilter)).forEach(business => {
+        const isEditing = business.id === mseEditingId;
+        const marker = L.marker([business.lat, business.lng], {
+          icon: createMseMarkerIcon(business, isEditing),
+          draggable: true
+        }).bindPopup(createMsePopup(business));
+        marker.on('dragend', event => {
+          const position = event.target.getLatLng();
+          if (!isInsideSalaBoundary(position.lat, position.lng)) {
+            marker.setLatLng([business.lat, business.lng]);
+            setMseMapStatus('Pin not moved: choose a location inside the Sala boundary.');
+            return;
+          }
+          updateMseBusiness(business.id, { lat: position.lat, lng: position.lng });
+        });
+        marker.on('click', () => {
+          if (mseEditingId) {
+            startEditMseBusiness(business.id);
+          }
+        });
+        marker.addTo(mseMarkers);
+      });
+      renderMseBusinessList();
+    }
+
+    function setMseMapStatus(message) {
+      const status = document.getElementById('mseMapStatus');
+      if (status) status.textContent = message;
+    }
+
+    function renderMseBusinessList() {
+      const list = document.getElementById('mseBusinessList');
+      if (!list) return;
+      list.replaceChildren();
+      if (!mseData.length) {
+        list.textContent = 'No master registry businesses are available to map.';
+        return;
+      }
+      mseData.forEach(business => {
+        const card = document.createElement('div');
+        card.className = `flex items-center justify-between gap-3 rounded-lg border bg-white p-3 transition-colors${business.id === mseEditingId ? ' border-amber-400 bg-amber-50 ring-1 ring-amber-200' : ' border-slate-200'}`;
+        const details = document.createElement('div');
+        details.className = 'min-w-0';
+        const name = document.createElement('p');
+        name.className = 'truncate text-xs font-bold text-slate-800';
+        name.textContent = business.name;
+        const sector = document.createElement('p');
+        sector.className = 'text-[10px] text-slate-500';
+        sector.textContent = `${business.sector} · ${business.lat.toFixed(6)}, ${business.lng.toFixed(6)}`;
+        details.append(name, sector);
+        const actions = document.createElement('div');
+        actions.className = 'flex shrink-0 gap-1.5';
+        const locateButton = document.createElement('button');
+        locateButton.type = 'button';
+        locateButton.className = 'rounded-lg border border-slate-300 px-2.5 py-1.5 text-[10px] font-bold text-slate-700 hover:bg-slate-100';
+        locateButton.textContent = 'Locate';
+        locateButton.setAttribute('aria-label', `Locate ${business.name} on map`);
+        locateButton.addEventListener('click', () => focusMseBusiness(business.id));
+        const editButton = document.createElement('button');
+        editButton.type = 'button';
+        editButton.className = 'rounded-lg border border-slate-300 px-2.5 py-1.5 text-[10px] font-bold text-slate-700 hover:bg-slate-100';
+        editButton.textContent = 'Edit';
+        editButton.setAttribute('aria-label', `Edit ${business.name}`);
+        editButton.addEventListener('click', () => startEditMseBusiness(business.id));
+        actions.append(locateButton, editButton);
+        card.append(details, actions);
+        list.append(card);
+      });
+    }
+
+    function startNewMseBusiness() {
+      mseEditingId = null;
+      msePlaceMode = true;
+      renderMseMarkers();
+      document.getElementById('mseEditorForm').reset();
+      document.getElementById('mseNameInput').disabled = false;
+      document.getElementById('mseSectorInput').disabled = false;
+      document.getElementById('mseEditingBanner').classList.add('hidden');
+      document.getElementById('mseEditorTitle').textContent = 'Master registry businesses only';
+      document.getElementById('mseSaveButton').textContent = 'Save location';
+      document.getElementById('mseEditorHelp').textContent = 'Add the enterprise in the master registry first, then select it here to set its location.';
+      setMseEditorCoordinates(14.2667416, 121.1200223);
+      document.getElementById('mseEditor').classList.remove('hidden');
+      setMseMapStatus('Click inside the outlined Sala boundary to place the new square marker.');
+      document.getElementById('mseNameInput').focus();
+    }
+
+    function startEditMseBusiness(id) {
+      const business = mseData.find(entry => entry.id === id);
+      if (!business) return;
+      mseEditingId = id;
+      msePlaceMode = true;
+      currentMseSectorFilter = 'ALL';
+      updateMseSectorButtons();
+      document.getElementById('mseNameInput').value = business.name;
+      document.getElementById('mseNameInput').disabled = true;
+      document.getElementById('mseSectorInput').value = business.sector;
+      document.getElementById('mseSectorInput').disabled = true;
+      setMseEditorCoordinates(business.lat, business.lng);
+      document.getElementById('mseEditorTitle').textContent = 'Edit business location';
+      document.getElementById('mseEditingLabel').textContent = `Now editing · ${business.sector}`;
+      document.getElementById('mseEditingBusinessName').textContent = business.name;
+      document.getElementById('mseEditingBanner').classList.remove('hidden');
+      document.getElementById('mseEditorHelp').textContent = 'You are changing this business only. Drag its outlined map square or click another point inside Sala to move it.';
+      document.getElementById('mseSaveButton').textContent = 'Save changes';
+      document.getElementById('mseEditor').classList.remove('hidden');
+      renderMseMarkers();
+      focusMseBusiness(id);
+      setMseMapStatus(`Now editing “${business.name}”. Its square is highlighted in yellow; save changes or cancel below.`);
+      document.getElementById('mseEditor').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function focusMseBusiness(id) {
+      const business = mseData.find(entry => entry.id === id);
+      if (!business || !mseMap) return;
+      const marker = Object.values(mseMarkers.getLayers()).find(layer => {
+        const position = layer.getLatLng();
+        return Math.abs(position.lat - business.lat) < 0.0000001 &&
+          Math.abs(position.lng - business.lng) < 0.0000001;
+      });
+      mseMap.setView([business.lat, business.lng], Math.max(mseMap.getZoom(), 17), { animate: true });
+      if (marker) marker.openPopup();
+      setMseMapStatus(`Located “${business.name}” · ${business.sector}.`);
+    }
+
+    function zoomToSala() {
+      if (mseMap && mseBoundaryLayer) {
+        mseMap.fitBounds(mseBoundaryLayer.getBounds(), { padding: [20, 20], maxZoom: 15 });
+      } else if (mseMap) {
+        mseMap.setView([14.2667416, 121.1200223], 14);
+      }
+    }
+
+    function setMseEditorCoordinates(latitude, longitude) {
+      document.getElementById('mseLatInput').value = latitude.toFixed(7);
+      document.getElementById('mseLngInput').value = longitude.toFixed(7);
+    }
+
+    function cancelMseEdit() {
+      mseEditingId = null;
+      msePlaceMode = false;
+      document.getElementById('mseEditingBanner').classList.add('hidden');
+      document.getElementById('mseEditor').classList.add('hidden');
+      if (mseMap) renderMseMarkers();
+    }
+
+    function saveMseEditor(event) {
+      event.preventDefault();
+      const name = document.getElementById('mseNameInput').value.trim();
+      const sector = document.getElementById('mseSectorInput').value;
+      const lat = Number(document.getElementById('mseLatInput').value);
+      const lng = Number(document.getElementById('mseLngInput').value);
+      if (!name || !isInsideSalaBoundary(lat, lng)) {
+        setMseMapStatus('Enter a business name and choose coordinates inside the Sala boundary.');
+        return;
+      }
+
+      if (mseEditingId === null) {
+        setMseMapStatus('Add enterprises through the master registry, then map their locations here.');
+        return;
+      }
+      const nextData = mseData.map(business => business.id === mseEditingId ? { ...business, name, sector, lat, lng } : business);
+      if (!persistMseData(nextData)) return;
+      cancelMseEdit();
+      renderMseMarkers();
+      setMseMapStatus('Master registry business location saved in this browser.');
+    }
+
+    function updateMseBusiness(id, changes) {
+      const nextData = mseData.map(business => business.id === id ? { ...business, ...changes } : business);
+      if (persistMseData(nextData)) {
+        renderMseMarkers();
+        setMseMapStatus('Master registry business location updated in this browser.');
+      }
+    }
+
+    function persistMseData(nextData) {
+      try {
+        localStorage.setItem(MSE_STORAGE_KEY, JSON.stringify(nextData));
+      } catch (error) {
+        console.error('Could not save map locations to browser storage:', error);
+        setMseMapStatus('Could not save changes in browser storage. Check available storage, then try again.');
+        return false;
+      }
+      mseData = nextData;
+      return true;
+    }
     function setFilterSector(sector) {
       currentSectorFilter = sector;
       document.querySelectorAll(".filter-chip").forEach(btn => {
